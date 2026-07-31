@@ -7,16 +7,15 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Палитра */
             --bg-color: #f7f4ee;         /* Молочно-кремовый фон */
-            --card-bg: #ffffff;         /* Очень светлый бежевый/белый */
-            --card-shadow: rgba(180, 170, 160, 0.15); /* Легкая мягкая тень */
+            --card-bg: #ffffff;         /* Белые карточки */
+            --card-shadow: rgba(180, 170, 160, 0.15); /* Легкая тень */
             --btn-gold: #c6a258;        /* Матовое золото */
             --btn-gold-hover: #b59247;  
-            --text-main: #2b2825;       /* Графитово-коричневый */
-            --text-muted: #726c65;      /* Приглушенный теплый */
+            --text-main: #2b2825;       /* Темный графитовый */
+            --text-muted: #726c65;      /* Приглушенный */
             --accent-lavender: #bfa8e2;  /* Нежная лаванда */
-            --border-color: #eee9e0;     /* Мягкие границы */
+            --border-color: #eee9e0;     
         }
 
         body {
@@ -70,11 +69,6 @@
             gap: 12px;
             cursor: pointer;
             box-shadow: 0 4px 12px var(--card-shadow);
-            transition: transform 0.1s, border-color 0.2s;
-        }
-
-        .service-card:active {
-            transform: scale(0.99);
         }
 
         .service-card input[type="checkbox"] {
@@ -84,9 +78,7 @@
             height: 18px;
         }
 
-        .service-info {
-            flex-grow: 1;
-        }
+        .service-info { flex-grow: 1; }
 
         .service-title {
             font-weight: 600;
@@ -125,9 +117,7 @@
             color: var(--text-muted);
         }
 
-        .input-group {
-            margin-bottom: 12px;
-        }
+        .input-group { margin-bottom: 12px; }
 
         .input-group label {
             display: block;
@@ -148,10 +138,6 @@
             outline: none;
         }
 
-        .input-group input:focus, .input-group textarea:focus {
-            border-color: var(--accent-lavender);
-        }
-
         .footer-action {
             position: fixed;
             bottom: 0;
@@ -163,7 +149,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
         }
 
         .total-price {
@@ -181,12 +166,67 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
-            box-shadow: 0 3px 8px rgba(198, 162, 88, 0.3);
-            transition: background-color 0.2s;
         }
 
-        .btn-submit:active {
-            background-color: var(--btn-gold-hover);
+        /* --- МОДАЛЬНОЕ ОКНО ОПЛАТЫ --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        .card-number-box {
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 15px 0;
+            border: 1px dashed var(--btn-gold);
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        .btn-modal-pay {
+            background-color: var(--btn-gold);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .btn-modal-close {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -253,12 +293,29 @@
 
     <div class="footer-action">
         <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
-        <button class="btn-submit" id="submit-btn" onclick="sendOrder()">Підтверджую заказ</button>
+        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Підтверджую заказ</button>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-card">
+            <h3>💳 Оплата замовлення</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
+            
+            <div class="card-number-box">
+                4441 1111 2222 3333
+            </div>
+
+            <button class="btn-modal-pay" onclick="sendOrder()">Я оплатив(а) — Отправить заказ</button>
+            <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        let currentPayload = null;
 
         function calculateTotal() {
             const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
@@ -269,11 +326,10 @@
             document.getElementById('total-val').innerText = total;
         }
 
-        function sendOrder() {
+        function openPaymentModal() {
             const name = document.getElementById('client-name').value.trim();
             const dob = document.getElementById('client-dob').value.trim();
             const question = document.getElementById('client-question').value.trim();
-
             const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
             if (selectedCheckboxes.length === 0) {
@@ -293,7 +349,7 @@
                 total += parseInt(cb.value);
             });
 
-            const payload = {
+            currentPayload = {
                 client_name: name,
                 client_dob: dob,
                 client_question: question || "Без питання",
@@ -301,7 +357,18 @@
                 total_amount: total
             };
 
-            tg.sendData(JSON.stringify(payload));
+            document.getElementById('modal-sum').innerText = total;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        function sendOrder() {
+            if (currentPayload) {
+                tg.sendData(JSON.stringify(currentPayload));
+            }
         }
     </script>
 </body>
