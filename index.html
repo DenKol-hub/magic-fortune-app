@@ -16,12 +16,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             user-select: none;
         }
-        .gold-border {
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-        .gold-glow {
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.15);
-        }
         .service-card.selected {
             border-color: #fbbf24;
             background-color: rgba(251, 191, 36, 0.08);
@@ -32,7 +26,7 @@
 
     <!-- Header -->
     <div class="text-center my-4">
-        <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-purple-950/80 border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl shadow-lg">
+        <div class="w-14 h-14 mx-auto mb-2 rounded-full bg-purple-950/80 border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl shadow-lg">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
         </div>
         <h1 class="text-2xl font-bold text-amber-400 tracking-wide">Тайны Судьбы</h1>
@@ -41,8 +35,8 @@
 
     <!-- Services Selection (Multi-select) -->
     <div class="space-y-3 mb-6">
-        <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-cards text-amber-400"></i> Выберите услуги:
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-cards text-amber-400"></i> ВЫБЕРИТЕ УСЛУГИ:
         </h2>
 
         <!-- Service 1 -->
@@ -51,11 +45,11 @@
                 <input type="checkbox" id="chk-love" class="w-5 h-5 accent-amber-400 pointer-events-none">
                 <div>
                     <div class="font-medium text-sm text-gray-100">Любовь и Отношения</div>
-                    <div class="text-xs text-gray-400">Чувства партнера, перспектива союза</div>
+                    <div class="text-[11px] text-gray-400">Чувства партнера, перспектива союза</div>
                 </div>
             </div>
             <div class="text-right">
-                <span class="text-amber-400 font-bold text-base">250 грн</span>
+                <span class="text-amber-400 font-bold text-sm">250 грн</span>
                 <span class="block text-[10px] text-gray-500 line-through">500 грн</span>
             </div>
         </div>
@@ -66,11 +60,11 @@
                 <input type="checkbox" id="chk-career" class="w-5 h-5 accent-amber-400 pointer-events-none">
                 <div>
                     <div class="font-medium text-sm text-gray-100">Карьера и Финансы</div>
-                    <div class="text-xs text-gray-400">Работа, бизнес, денежные потоки</div>
+                    <div class="text-[11px] text-gray-400">Работа, бизнес, денежные потоки</div>
                 </div>
             </div>
             <div class="text-right">
-                <span class="text-amber-400 font-bold text-base">350 грн</span>
+                <span class="text-amber-400 font-bold text-sm">350 грн</span>
                 <span class="block text-[10px] text-gray-500 line-through">700 грн</span>
             </div>
         </div>
@@ -81,11 +75,11 @@
                 <input type="checkbox" id="chk-karma" class="w-5 h-5 accent-amber-400 pointer-events-none">
                 <div>
                     <div class="font-medium text-sm text-gray-100">Карма и Предназначение</div>
-                    <div class="text-xs text-gray-400">Кармические уроки, жизненный путь</div>
+                    <div class="text-[11px] text-gray-400">Кармические уроки, жизненный путь</div>
                 </div>
             </div>
             <div class="text-right">
-                <span class="text-amber-400 font-bold text-base">450 грн</span>
+                <span class="text-amber-400 font-bold text-sm">450 грн</span>
                 <span class="block text-[10px] text-gray-500 line-through">900 грн</span>
             </div>
         </div>
@@ -96,11 +90,11 @@
                 <input type="checkbox" id="chk-year" class="w-5 h-5 accent-amber-400 pointer-events-none">
                 <div>
                     <div class="font-medium text-sm text-gray-100">Большой Прогноз на 12 Месяцев</div>
-                    <div class="text-xs text-gray-400">Разбор всех сфер на целый год</div>
+                    <div class="text-[11px] text-gray-400">Разбор всех сфер на целый год</div>
                 </div>
             </div>
             <div class="text-right">
-                <span class="text-amber-400 font-bold text-base">600 грн</span>
+                <span class="text-amber-400 font-bold text-sm">600 грн</span>
                 <span class="block text-[10px] text-gray-500 line-through">1200 грн</span>
             </div>
         </div>
@@ -108,30 +102,30 @@
 
     <!-- Questionnaire Form -->
     <div class="space-y-3 p-4 rounded-xl bg-purple-950/20 border border-purple-900/40 mb-6">
-        <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-user-pen text-amber-400"></i> Данные для расклада:
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-user-pen text-amber-400"></i> ДАННЫЕ ДЛЯ РАСКЛАДА:
         </h2>
 
         <div>
-            <label class="block text-xs text-gray-400 mb-1">Ваше Имя *</label>
+            <label class="block text-[11px] text-gray-400 mb-1">Ваше Имя *</label>
             <input type="text" id="input-name" placeholder="Например: Анна" class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400">
         </div>
 
         <div>
-            <label class="block text-xs text-gray-400 mb-1">Дата Рождения *</label>
+            <label class="block text-[11px] text-gray-400 mb-1">Дата Рождения *</label>
             <input type="text" id="input-dob" placeholder="ДД.ММ.ГГГГ" class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400">
         </div>
 
         <div>
-            <label class="block text-xs text-gray-400 mb-1">Ваш вопрос или ситуация</label>
-            <textarea id="input-question" rows="2" placeholder="Опишите ситуацию или задайте точные вопросы..." class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400"></textarea>
+            <label class="block text-[11px] text-gray-400 mb-1">Ваш вопрос или ситуация (необязательно)</label>
+            <textarea id="input-question" rows="2" placeholder="Опишите ситуацию..." class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400 resize-none"></textarea>
         </div>
     </div>
 
     <!-- Total Summary Sticky Footer Button -->
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950/95 backdrop-blur-md border-t border-purple-900/50 flex items-center justify-between gap-4 z-40">
         <div>
-            <div class="text-[10px] text-gray-400 uppercase">Итого к оплате:</div>
+            <div class="text-[10px] text-gray-400 uppercase">ИТОГО К ОПЛАТЕ:</div>
             <div id="total-price-display" class="text-xl font-bold text-amber-400">0 грн</div>
         </div>
         <button onclick="handleConfirmClick()" id="btn-submit" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-lg active:scale-95 text-center">
@@ -139,9 +133,9 @@
         </button>
     </div>
 
-    <!-- MODAL POPUP: Payment Details & FIO (ONLY OPENS AFTER CONFIRMATION) -->
-    <div id="payment-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-amber-400/50 rounded-2xl w-full max-w-md p-5 shadow-2xl relative animate-fade-in">
+    <!-- MODAL POPUP: Payment Details & FIO -->
+    <div id="payment-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-amber-400/50 rounded-2xl w-full max-w-md p-5 shadow-2xl relative">
 
             <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-lg p-2">
                 <i class="fa-solid fa-xmark"></i>
@@ -152,28 +146,29 @@
                     <i class="fa-solid fa-credit-card"></i>
                 </div>
                 <h3 class="text-lg font-bold text-amber-400">Реквизиты для оплаты</h3>
-                <p class="text-xs text-gray-400 mt-1">Заказ сформирован! Переведите точную сумму на карту:</p>
+                <p class="text-xs text-gray-400 mt-1">Заказ сформирован! Переведите сумму на карту:</p>
             </div>
 
-            <!-- Order Summary in Modal -->
+            <!-- Summary in Modal -->
             <div class="bg-purple-950/40 p-3 rounded-lg border border-purple-800/40 mb-4 text-xs space-y-1">
                 <div class="flex justify-between text-gray-300">
                     <span>Выбрано услуг:</span>
                     <span id="modal-services-count" class="font-semibold text-amber-300">0</span>
                 </div>
                 <div class="flex justify-between text-gray-300">
-                    <span>Сумма к оплате:</span>
+                    <span>К оплате:</span>
                     <span id="modal-total-amount" class="font-bold text-amber-400 text-sm">0 грн</span>
                 </div>
             </div>
 
-            <!-- Requisites Info (Card + FIO) -->
+            <!-- Card + FIO Details -->
             <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-amber-500/30 mb-5">
                 <div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Номер карты (Моно / Приват):</div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Номер карты:</div>
                     <div class="flex items-center justify-between mt-1">
-                        <span id="card-number" class="font-mono text-base font-bold text-amber-300 tracking-wider">4149 4999 8888 7777</span>
-                        <button onclick="copyCard()" class="text-xs bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 px-2.5 py-1 rounded border border-amber-400/40 transition-all">
+                        <!-- ВСТАВИТЬ НОМЕР КАРТЫ СУДА -->
+                        <span id="card-number" class="font-mono text-sm font-bold text-amber-300 tracking-wider">4149 4999 8888 7777</span>
+                        <button onclick="copyCard()" class="text-[11px] bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 px-2.5 py-1 rounded border border-amber-400/40 transition-all">
                             <i class="fa-regular fa-copy"></i> Скопировать
                         </button>
                     </div>
@@ -181,12 +176,13 @@
 
                 <div class="border-t border-gray-800 pt-2">
                     <div class="text-[10px] text-gray-400 uppercase tracking-wider">Получатель (ФИО):</div>
-                    <div class="text-sm font-semibold text-gray-100 mt-0.5" id="fio-name">Шевченко Елена Александровна</div>
+                    <!-- ВСТАВИТЬ ФИО ГАДАЛКИ СЮДА -->
+                    <div class="text-xs font-semibold text-gray-200 mt-0.5" id="fio-name">Шевченко Елена Александровна</div>
                 </div>
             </div>
 
             <p class="text-[11px] text-gray-400 text-center mb-4 leading-relaxed">
-                <i class="fa-solid fa-circle-info text-amber-400"></i> После перевода нажмите кнопку ниже, чтобы отправить анкету и чек в диалог с ботом.
+                ⚠️ После перевода нажмите кнопку ниже. Бот попросит отправить **скриншот чека**.
             </p>
 
             <button onclick="sendOrderToBot()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg active:scale-95 text-center flex items-center justify-center gap-2">
@@ -195,7 +191,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Script Logic -->
     <script>
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
@@ -246,12 +242,10 @@
                 return;
             }
 
-            // Fill modal data
             const count = Object.keys(selectedServices).length;
             document.getElementById('modal-services-count').innerText = `${count} шт.`;
             document.getElementById('modal-total-amount').innerText = `${total} грн`;
 
-            // Open Modal
             document.getElementById('payment-modal').classList.remove('hidden');
         }
 
@@ -262,7 +256,8 @@
         function copyCard() {
             const cardNumber = document.getElementById('card-number').innerText.replace(/\s+/g, '');
             navigator.clipboard.writeText(cardNumber).then(() => {
-                alert('Номер карты скопирован в буфер обмена!');
+                if (tg && tg.showAlert) tg.showAlert("Номер карты скопирован!");
+                else alert('Номер карты скопирован!');
             });
         }
 
@@ -286,92 +281,10 @@
             if (tg && tg.sendData) {
                 tg.sendData(JSON.stringify(payload));
             } else {
-                alert(`[Тестовый режим без Telegram]\n\nЗаказ отправлен!\nИмя: ${name}\nУслуги: ${servicesList.join(', ')}\nСумма: ${total} грн`);
+                alert(`Заказ отправлен (тест)!\nИмя: ${name}\nСумма: ${total} грн`);
                 closeModal();
             }
         }
     </script>
 </body>
 </html>
-```eof
-
-```python:bot.py
-import logging
-import json
-from aiogram import Bot, Dispatcher, F, types
-from aiogram.filters import CommandStart
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-
-# ТОКЕН БОТА И ID АДМИНА/ГАДАЛКИ
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
-ADMIN_CHAT_ID = 123456789  # Telegram ID гадалки/админа
-
-# URL скомпилированного Mini App на Vercel
-WEB_APP_URL = "https://your-app-name.vercel.app"
-
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
-
-@dp.message(CommandStart())
-async def cmd_start(message: types.Message):
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="🔮 Открыть Салон Гаданий",
-                web_app=WebAppInfo(url=WEB_APP_URL)
-            )
-        ]
-    ])
-    await message.answer(
-        f"Приветствую вас, {message.from_user.first_name}! ✨\n\n"
-        "Нажмите кнопку ниже, чтобы выбрать расклад Таро со скидкой 50% и оформить заказ.",
-        reply_markup=kb
-    )
-
-# Обработка данных из WebApp (после нажатия «Я оплатил(а) — Отправить заказ»)
-@dp.message(F.web_app_data)
-async def handle_web_app_data(message: types.Message):
-    try:
-        data = json.loads(message.web_app_data.data)
-        
-        services_str = "\n• " + "\n• ".join(data.get('services', []))
-        client_name = data.get('client_name')
-        client_dob = data.get('client_dob')
-        client_question = data.get('client_question')
-        total_amount = data.get('total_amount')
-
-        # Сообщение клиенту в чат
-        client_text = (
-            "✨ **Ваш заказ успешно принят!** ✨\n\n"
-            f"👤 **Имя:** {client_name}\n"
-            f"📅 **Дата рождения:** {client_dob}\n"
-            f"🔮 **Выбранные услуги:**{services_str}\n"
-            f"💰 **Сумма к оплате:** {total_amount} грн\n"
-            f"❓ **Вопрос:** {client_question}\n\n"
-            "📌 **Пожалуйста, пришлите скриншот или фото чека оплаты в этот чат**, "
-            "чтобы таролог приступил к работе!"
-        )
-        await message.answer(client_text, parse_mode="Markdown")
-
-        # Уведомление гадалке/админу
-        admin_text = (
-            "🚨 **НОВЫЙ ЗАКАЗ ИЗ MINI APP!** 🚨\n\n"
-            f"👤 **Клиент:** {client_name} (@{message.from_user.username or 'без_юзернейма'})\n"
-            f"🆔 **ID:** `{message.from_user.id}`\n"
-            f"📅 **ДР:** {client_dob}\n"
-            f"💳 **Сумма:** {total_amount} грн\n\n"
-            f"🔮 **Заказано:**{services_str}\n\n"
-            f"📝 **Вопрос клиента:**\n_{client_question}_"
-        )
-        await bot.send_message(chat_id=ADMIN_CHAT_ID, text=admin_text, parse_mode="Markdown")
-
-    except Exception as e:
-        logging.error(f"Ошибка обработки данных: {e}")
-        await message.answer("Произошла ошибка при обработке заказа. Попробуйте еще раз.")
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(dp.start_polling(bot))
-```eof
-
