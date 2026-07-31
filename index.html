@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Оракул Судьбы — Telegram Mini App</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0914;
+            --card-bg: #141126;
+            --card-border: #2a244d;
+            --accent-gold: #fbbf24;
+            --accent-purple: #8b5cf6;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            padding: 16px;
+            padding-bottom: 90px; /* space for Telegram MainButton */
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-gold);
+            font-size: 26px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin: 20px 0 12px 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CARD SELECTOR */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .service-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .service-card.selected {
+            border-color: var(--accent-gold);
+            background-color: #1d1838;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+        }
+
+        .service-card .icon {
+            font-size: 28px;
+            color: var(--accent-purple);
+            margin-bottom: 8px;
+        }
+
+        .service-card.selected .icon {
+            color: var(--accent-gold);
+        }
+
+        .service-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .service-card .price {
+            font-size: 13px;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* FORM INPUTS */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            margin-left: 4px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--accent-purple);
+        }
+
+        .form-textarea {
+            resize: none;
+            height: 90px;
+        }
+
+        /* PAYMENT BOX */
+        .payment-box {
+            background: linear-gradient(135deg, #181330 0%, #211a42 100%);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .payment-box h4 {
+            color: var(--accent-gold);
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .requisites-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .requisites-text {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--accent-gold);
+        }
+
+        .copy-btn {
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .notice {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Тайны Судьбы</h1>
+        <p>Заполните форму для персонального расклада</p>
+    </div>
+
+    <!-- 1. ВЫБОР РАСКЛАДА -->
+    <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 1. Выберите расклад</div>
+    <div class="services-grid">
+        <div class="service-card selected" onclick="selectService(this, 'Любовь и Отношения', 500)">
+            <div class="icon"><i class="fa-solid fa-heart"></i></div>
+            <h3>Любовь</h3>
+            <div class="price">500 ₽</div>
+        </div>
+        <div class="service-card" onclick="selectService(this, 'Карьера и Финансы', 700)">
+            <div class="icon"><i class="fa-solid fa-briefcase"></i></div>
+            <h3>Карьера</h3>
+            <div class="price">700 ₽</div>
+        </div>
+        <div class="service-card" onclick="selectService(this, 'Предсказание на Год', 1200)">
+            <div class="icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>На Год</h3>
+            <div class="price">1 200 ₽</div>
+        </div>
+        <div class="service-card" onclick="selectService(this, 'Кармический Вопрос', 900)">
+            <div class="icon"><i class="fa-solid fa-eye"></i></div>
+            <h3>Карма</h3>
+            <div class="price">900 ₽</div>
+        </div>
+    </div>
+
+    <!-- 2. ДАННЫЕ КЛИЕНТА -->
+    <div class="section-title"><i class="fa-solid fa-user-pen"></i> 2. Ваши данные</div>
+    <div class="form-group">
+        <label>Ваше Имя</label>
+        <input type="text" id="userName" class="form-input" placeholder="Введите имя..." oninput="validateForm()">
+    </div>
+    <div class="form-group">
+        <label>Дата Рождения</label>
+        <input type="text" id="userDob" class="form-input" placeholder="ДД.ММ.ГГГГ (напр. 15.08.1995)" oninput="validateForm()">
+    </div>
+    <div class="form-group">
+        <label>Ваш Вопрос / Ситуация</label>
+        <textarea id="userQuestion" class="form-textarea" placeholder="Опишите подробно, что вас волнует..." oninput="validateForm()"></textarea>
+    </div>
+
+    <!-- 3. РЕКВИЗИТЫ ОПЛАТЫ -->
+    <div class="section-title"><i class="fa-solid fa-credit-card"></i> 3. Оплата заказа</div>
+    <div class="payment-box">
+        <h4><i class="fa-solid fa-shield-halved"></i> Перевод по СБП / Карте</h4>
+        <p class="notice">Переведите итоговую сумму по номеру телефона в Т-Банк / Сбербанк:</p>
+        
+        <div class="requisites-row">
+            <span class="requisites-text" id="phoneNum">+7 (999) 123-45-67</span>
+            <button class="copy-btn" onclick="copyRequisites()">Копировать</button>
+        </div>
+        
+        <p class="notice" style="margin-top: 10px;">
+            ⚠️ После нажатия кнопки «Отправить заказ» приложение закроется, и бот попросит вас прикрепить **скриншот чека** об оплате.
+        </p>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+
+        let selectedService = {
+            name: 'Любовь и Отношения',
+            price: 500
+        };
+
+        if (tg) {
+            tg.expand(); // Разворачиваем на полный экран
+            
+            // Настройка родной кнопки Telegram внизу экрана
+            tg.MainButton.setText(`ОПЛАТИТЬ И ОТПРАВИТЬ (${selectedService.price} ₽)`);
+            tg.MainButton.textColor = "#ffffff";
+            tg.MainButton.color = "#8b5cf6";
+            tg.MainButton.show();
+            tg.MainButton.onClick(sendDataToBot);
+        }
+
+        function selectService(element, name, price) {
+            document.querySelectorAll('.service-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            selectedService = { name, price };
+            
+            if (tg) {
+                tg.MainButton.setText(`ОПЛАТИТЬ И ОТПРАВИТЬ (${price} ₽)`);
+            }
+            validateForm();
+        }
+
+        function validateForm() {
+            const name = document.getElementById('userName').value.trim();
+            const dob = document.getElementById('userDob').value.trim();
+            const question = document.getElementById('userQuestion').value.trim();
+
+            const isValid = name.length > 0 && dob.length > 0 && question.length > 0;
+
+            if (tg) {
+                if (isValid) {
+                    tg.MainButton.enable();
+                    tg.MainButton.color = "#8b5cf6";
+                } else {
+                    tg.MainButton.disable();
+                    tg.MainButton.color = "#475569";
+                }
+            }
+        }
+
+        function copyRequisites() {
+            const num = document.getElementById('phoneNum').innerText;
+            navigator.clipboard.writeText(num);
+            if (tg) tg.showAlert("Номер реквизитов скопирован!");
+            else alert("Скопировано!");
+        }
+
+        function sendDataToBot() {
+            const payload = {
+                service: selectedService.name,
+                price: selectedService.price,
+                name: document.getElementById('userName').value.trim(),
+                dob: document.getElementById('userDob').value.trim(),
+                question: document.getElementById('userQuestion').value.trim()
+            };
+
+            if (tg) {
+                // Отправляем JSON-строку в бот
+                tg.sendData(JSON.stringify(payload));
+            } else {
+                alert("Данные для отправки:\n" + JSON.stringify(payload, null, 2));
+            }
+        }
+
+        // Первичная проверка валидности
+        validateForm();
+    </script>
+</body>
+</html>
+```eof
+
+### 1. Где бесплатно зарегистрировать и выложить фронтенд (Hosting)
+
+Telegram Mini App **обязан работать по безопасному протоколу HTTPS**. Бесплатные и самые удобные площадки:
+
+#### Вариант A: Vercel (Самый популярный и простой)
+1. Зарегистрируйтесь на [Vercel.com](https://vercel.com) через GitHub.
+2. Создайте новый репозиторий на GitHub (например, `tg-oracle-frontend`) и загрузите туда файл `index.html`.
+3. В панели Vercel нажмите **Import Repository** и выберите ваш репозиторий.
+4. Нажмите **Deploy**.
+5. Через 15 секунд вы получите готовую HTTPS-ссылку: `[https://tg-oracle-frontend.vercel.app](https://tg-oracle-frontend.vercel.app)`.
+
+#### Вариант B: GitHub Pages (Прямо из репозитория)
+1. В вашем репозитории на GitHub перейдите в **Settings** -> **Pages**.
+2. В разделе **Source** выберите ветку `main` (root) и нажмите **Save**.
+3. Получите бесплатную ссылку: `[https://ваш-логин.github.io/tg-oracle-frontend/](https://ваш-логин.github.io/tg-oracle-frontend/)`.
+
+---
+
+### 2. Как привязать ссылку к боту через BotFather
+
+1. Откройте [@BotFather](https://t.me/BotFather) в Telegram.
+2. Отправьте команду `/mybots` и выберите вашего бота-гадалку.
+3. Перейдите в **Bot Settings** → **Menu Button** → **Configure menu button**.
+4. Отправьте полученную HTTPS-ссылку от Vercel или GitHub Pages.
+5. Напишите текст для кнопки, например: `🔮 Заказать гадание`.
+
+Теперь при клике на кнопку «Заказать гадание» у пользователя будет открываться выложенный веб-интерфейс, а при нажатии на нижнюю кнопку Telegram сформированный JSON с данными отправится напрямую в чат бота.
