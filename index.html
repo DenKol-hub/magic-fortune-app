@@ -7,18 +7,22 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #111319;
-            --card-bg: #1a1d26;
-            --accent-color: #d4af37;
-            --text-color: #ffffff;
-            --text-muted: #9aa0a6;
-            --border-color: #2a2e3a;
+            /* Новая палитра */
+            --bg-color: #f7f4ee;         /* Молочно-кремовый фон */
+            --card-bg: #ffffff;         /* Очень светлый бежевый/белый */
+            --card-shadow: rgba(180, 170, 160, 0.15); /* Легкая мягкая тень */
+            --btn-gold: #c6a258;        /* Матовое золото */
+            --btn-gold-hover: #b59247;  
+            --text-main: #2b2825;       /* Графитово-коричневый */
+            --text-muted: #726c65;      /* Приглушенный теплый */
+            --accent-lavender: #bfa8e2;  /* Нежная лаванда */
+            --border-color: #eee9e0;     /* Мягкие границы */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             margin: 0;
             padding: 16px;
             box-sizing: border-box;
@@ -30,15 +34,21 @@
         }
 
         .header h1 {
-            font-size: 20px;
+            font-size: 19px;
             margin: 0 0 6px 0;
-            color: var(--accent-color);
+            color: var(--text-main);
+            font-weight: 700;
         }
 
         .header h2 {
-            font-size: 16px;
-            font-weight: normal;
+            font-size: 15px;
+            font-weight: 500;
             margin: 0 0 10px 0;
+            color: var(--accent-lavender);
+            background: rgba(191, 168, 226, 0.15);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
         }
 
         .header p {
@@ -46,6 +56,7 @@
             color: var(--text-muted);
             margin: 0;
             font-style: italic;
+            line-height: 1.4;
         }
 
         .services-list {
@@ -58,18 +69,23 @@
         .service-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: 14px;
+            padding: 16px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
             cursor: pointer;
-            transition: border-color 0.2s;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            transition: transform 0.1s, border-color 0.2s;
+        }
+
+        .service-card:active {
+            transform: scale(0.99);
         }
 
         .service-card input[type="checkbox"] {
-            margin-top: 4px;
-            accent-color: var(--accent-color);
+            margin-top: 3px;
+            accent-color: var(--btn-gold);
             width: 18px;
             height: 18px;
         }
@@ -82,6 +98,7 @@
             font-weight: 600;
             font-size: 15px;
             margin-bottom: 4px;
+            color: var(--text-main);
         }
 
         .service-desc {
@@ -91,8 +108,8 @@
         }
 
         .service-price {
-            font-weight: bold;
-            color: var(--accent-color);
+            font-weight: 700;
+            color: var(--btn-gold);
             font-size: 15px;
             white-space: nowrap;
         }
@@ -100,13 +117,14 @@
         .form-section {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 16px;
-            margin-bottom: 80px;
+            margin-bottom: 90px;
+            box-shadow: 0 4px 12px var(--card-shadow);
         }
 
         .form-section h3 {
-            font-size: 14px;
+            font-size: 13px;
             margin: 0 0 12px 0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -126,13 +144,18 @@
 
         .input-group input, .input-group textarea {
             width: 100%;
-            padding: 10px;
+            padding: 11px;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
+            border-radius: 10px;
+            color: var(--text-main);
             box-sizing: border-box;
             font-size: 14px;
+            outline: none;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: var(--accent-lavender);
         }
 
         .footer-action {
@@ -142,26 +165,34 @@
             right: 0;
             background-color: var(--bg-color);
             border-top: 1px solid var(--border-color);
-            padding: 12px 16px;
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
         }
 
         .total-price {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .btn-submit {
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
+            background-color: var(--btn-gold);
+            color: #ffffff;
+            font-weight: 600;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 12px 22px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
+            box-shadow: 0 3px 8px rgba(198, 162, 88, 0.3);
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:active {
+            background-color: var(--btn-gold-hover);
         }
     </style>
 </head>
@@ -212,7 +243,7 @@
     </div>
 
     <div class="form-section">
-        <h3>Дані для раскладу</h3>
+        <h3>Дані для розкладу</h3>
         <div class="input-group">
             <label>Ваше ім'я *</label>
             <input type="text" id="client-name" placeholder="Наприклад: Анна">
