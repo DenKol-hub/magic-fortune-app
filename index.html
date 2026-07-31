@@ -1,289 +1,283 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тайны Судьбы — Расклады Таро</title>
-    <!-- Telegram WebApp SDK -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Современный мистицизм - Таємниці Долі</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #0b0914;
-            color: #f1f5f9;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            user-select: none;
+        :root {
+            --bg-color: #111319;
+            --card-bg: #1a1d26;
+            --accent-color: #d4af37;
+            --text-color: #ffffff;
+            --text-muted: #9aa0a6;
+            --border-color: #2a2e3a;
         }
-        .service-card.selected {
-            border-color: #fbbf24;
-            background-color: rgba(251, 191, 36, 0.08);
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin: 0 0 6px 0;
+            color: var(--accent-color);
+        }
+
+        .header h2 {
+            font-size: 16px;
+            font-weight: normal;
+            margin: 0 0 10px 0;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+            font-style: italic;
+        }
+
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .service-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .service-card input[type="checkbox"] {
+            margin-top: 4px;
+            accent-color: var(--accent-color);
+            width: 18px;
+            height: 18px;
+        }
+
+        .service-info {
+            flex-grow: 1;
+        }
+
+        .service-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .service-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .service-price {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .form-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 80px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .footer-action {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-price {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
-<body class="p-4 pb-24">
+<body>
 
-    <!-- Header -->
-    <div class="text-center my-4">
-        <div class="w-14 h-14 mx-auto mb-2 rounded-full bg-purple-950/80 border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl shadow-lg">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </div>
-        <h1 class="text-2xl font-bold text-amber-400 tracking-wide">Тайны Судьбы</h1>
-        <p class="text-xs text-purple-300/80 mt-1">Выберите один или несколько раскладов со скидкой -50%</p>
+    <div class="header">
+        <h1>Современный мистицизм - Таємниці Долі</h1>
+        <h2>Вас вітає Корнелія 👩🏻‍💻</h2>
+        <p>Ваші відповіді вже існують. Залишилося лише поставити правильне запитання.</p>
     </div>
 
-    <!-- Services Selection (Multi-select) -->
-    <div class="space-y-3 mb-6">
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-cards text-amber-400"></i> ВЫБЕРИТЕ УСЛУГИ:
-        </h2>
+    <div class="services-list">
+        <label class="service-card">
+            <input type="checkbox" value="150" data-name="Любов і стосунки" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">❤️ Любов і стосунки</div>
+                <div class="service-desc">Почуття, наміри, перспектива розвитку взаємин</div>
+            </div>
+            <div class="service-price">150 грн</div>
+        </label>
 
-        <!-- Service 1 -->
-        <div onclick="toggleService('love', 250, 'Расклад «Любовь и Отношения»')" id="card-love" class="service-card cursor-pointer p-3.5 rounded-xl bg-purple-950/30 border border-purple-800/40 transition-all flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <input type="checkbox" id="chk-love" class="w-5 h-5 accent-amber-400 pointer-events-none">
-                <div>
-                    <div class="font-medium text-sm text-gray-100">Любовь и Отношения</div>
-                    <div class="text-[11px] text-gray-400">Чувства партнера, перспектива союза</div>
-                </div>
+        <label class="service-card">
+            <input type="checkbox" value="100" data-name="Кар’єра та фінанси" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">💰 Кар’єра та фінанси</div>
+                <div class="service-desc">Робота, покликання, нові можливості та фінансовий потік</div>
             </div>
-            <div class="text-right">
-                <span class="text-amber-400 font-bold text-sm">250 грн</span>
-                <span class="block text-[10px] text-gray-500 line-through">500 грн</span>
+            <div class="service-price">100 грн</div>
+        </label>
+
+        <label class="service-card">
+            <input type="checkbox" value="200" data-name="Карма та призначення" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">🌙 Карма та призначення</div>
+                <div class="service-desc">Життєві уроки, духовний шлях і призначення душі</div>
             </div>
+            <div class="service-price">200 грн</div>
+        </label>
+
+        <label class="service-card">
+            <input type="checkbox" value="300" data-name="Великий прогноз на 3 місяці" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">✨ Великий прогноз на 3 місяці</div>
+                <div class="service-desc">Детальний прогноз на всі сфери життя</div>
+            </div>
+            <div class="service-price">300 грн</div>
+        </label>
+    </div>
+
+    <div class="form-section">
+        <h3>Дані для раскладу</h3>
+        <div class="input-group">
+            <label>Ваше ім'я *</label>
+            <input type="text" id="client-name" placeholder="Наприклад: Анна">
         </div>
-
-        <!-- Service 2 -->
-        <div onclick="toggleService('career', 350, 'Расклад «Карьера и Финансы»')" id="card-career" class="service-card cursor-pointer p-3.5 rounded-xl bg-purple-950/30 border border-purple-800/40 transition-all flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <input type="checkbox" id="chk-career" class="w-5 h-5 accent-amber-400 pointer-events-none">
-                <div>
-                    <div class="font-medium text-sm text-gray-100">Карьера и Финансы</div>
-                    <div class="text-[11px] text-gray-400">Работа, бизнес, денежные потоки</div>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="text-amber-400 font-bold text-sm">350 грн</span>
-                <span class="block text-[10px] text-gray-500 line-through">700 грн</span>
-            </div>
+        <div class="input-group">
+            <label>Дата народження *</label>
+            <input type="text" id="client-dob" placeholder="ДД.ММ.ГГГГ">
         </div>
-
-        <!-- Service 3 -->
-        <div onclick="toggleService('karma', 450, 'Расклад «Карма и Предназначение»')" id="card-karma" class="service-card cursor-pointer p-3.5 rounded-xl bg-purple-950/30 border border-purple-800/40 transition-all flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <input type="checkbox" id="chk-karma" class="w-5 h-5 accent-amber-400 pointer-events-none">
-                <div>
-                    <div class="font-medium text-sm text-gray-100">Карма и Предназначение</div>
-                    <div class="text-[11px] text-gray-400">Кармические уроки, жизненный путь</div>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="text-amber-400 font-bold text-sm">450 грн</span>
-                <span class="block text-[10px] text-gray-500 line-through">900 грн</span>
-            </div>
-        </div>
-
-        <!-- Service 4 -->
-        <div onclick="toggleService('year', 600, 'Полный Прогноз «На Год»')" id="card-year" class="service-card cursor-pointer p-3.5 rounded-xl bg-purple-950/30 border border-purple-800/40 transition-all flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <input type="checkbox" id="chk-year" class="w-5 h-5 accent-amber-400 pointer-events-none">
-                <div>
-                    <div class="font-medium text-sm text-gray-100">Большой Прогноз на 12 Месяцев</div>
-                    <div class="text-[11px] text-gray-400">Разбор всех сфер на целый год</div>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="text-amber-400 font-bold text-sm">600 грн</span>
-                <span class="block text-[10px] text-gray-500 line-through">1200 грн</span>
-            </div>
+        <div class="input-group">
+            <label>Ваше запитання (за бажанням)</label>
+            <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки або конкретну ситуацію..."></textarea>
         </div>
     </div>
 
-    <!-- Questionnaire Form -->
-    <div class="space-y-3 p-4 rounded-xl bg-purple-950/20 border border-purple-900/40 mb-6">
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-user-pen text-amber-400"></i> ДАННЫЕ ДЛЯ РАСКЛАДА:
-        </h2>
-
-        <div>
-            <label class="block text-[11px] text-gray-400 mb-1">Ваше Имя *</label>
-            <input type="text" id="input-name" placeholder="Например: Анна" class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400">
-        </div>
-
-        <div>
-            <label class="block text-[11px] text-gray-400 mb-1">Дата Рождения *</label>
-            <input type="text" id="input-dob" placeholder="ДД.ММ.ГГГГ" class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400">
-        </div>
-
-        <div>
-            <label class="block text-[11px] text-gray-400 mb-1">Ваш вопрос или ситуация (необязательно)</label>
-            <textarea id="input-question" rows="2" placeholder="Опишите ситуацию..." class="w-full bg-slate-900/90 border border-purple-800/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-amber-400 resize-none"></textarea>
-        </div>
+    <div class="footer-action">
+        <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
+        <button class="btn-submit" id="submit-btn" onclick="sendOrder()">Підтверджую заказ</button>
     </div>
 
-    <!-- Total Summary Sticky Footer Button -->
-    <div class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950/95 backdrop-blur-md border-t border-purple-900/50 flex items-center justify-between gap-4 z-40">
-        <div>
-            <div class="text-[10px] text-gray-400 uppercase">ИТОГО К ОПЛАТЕ:</div>
-            <div id="total-price-display" class="text-xl font-bold text-amber-400">0 грн</div>
-        </div>
-        <button onclick="handleConfirmClick()" id="btn-submit" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-lg active:scale-95 text-center">
-            Подтверждаю заказ
-        </button>
-    </div>
-
-    <!-- MODAL POPUP: Payment Details & FIO -->
-    <div id="payment-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-amber-400/50 rounded-2xl w-full max-w-md p-5 shadow-2xl relative">
-
-            <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-lg p-2">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="text-center mb-4">
-                <div class="w-12 h-12 bg-amber-400/10 rounded-full text-amber-400 flex items-center justify-center text-xl mx-auto mb-2 border border-amber-400/30">
-                    <i class="fa-solid fa-credit-card"></i>
-                </div>
-                <h3 class="text-lg font-bold text-amber-400">Реквизиты для оплаты</h3>
-                <p class="text-xs text-gray-400 mt-1">Заказ сформирован! Переведите сумму на карту:</p>
-            </div>
-
-            <!-- Summary in Modal -->
-            <div class="bg-purple-950/40 p-3 rounded-lg border border-purple-800/40 mb-4 text-xs space-y-1">
-                <div class="flex justify-between text-gray-300">
-                    <span>Выбрано услуг:</span>
-                    <span id="modal-services-count" class="font-semibold text-amber-300">0</span>
-                </div>
-                <div class="flex justify-between text-gray-300">
-                    <span>К оплате:</span>
-                    <span id="modal-total-amount" class="font-bold text-amber-400 text-sm">0 грн</span>
-                </div>
-            </div>
-
-            <!-- Card + FIO Details -->
-            <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-amber-500/30 mb-5">
-                <div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Номер карты:</div>
-                    <div class="flex items-center justify-between mt-1">
-                        <!-- ВСТАВИТЬ НОМЕР КАРТЫ СУДА -->
-                        <span id="card-number" class="font-mono text-sm font-bold text-amber-300 tracking-wider">4149 4999 8888 7777</span>
-                        <button onclick="copyCard()" class="text-[11px] bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 px-2.5 py-1 rounded border border-amber-400/40 transition-all">
-                            <i class="fa-regular fa-copy"></i> Скопировать
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border-t border-gray-800 pt-2">
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Получатель (ФИО):</div>
-                    <!-- ВСТАВИТЬ ФИО ГАДАЛКИ СЮДА -->
-                    <div class="text-xs font-semibold text-gray-200 mt-0.5" id="fio-name">Шевченко Елена Александровна</div>
-                </div>
-            </div>
-
-            <p class="text-[11px] text-gray-400 text-center mb-4 leading-relaxed">
-                ⚠️ После перевода нажмите кнопку ниже. Бот попросит отправить **скриншот чека**.
-            </p>
-
-            <button onclick="sendOrderToBot()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg active:scale-95 text-center flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Я оплатил(а) — Отправить заказ
-            </button>
-        </div>
-    </div>
-
-    <!-- Script Logic -->
     <script>
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.expand();
-            tg.ready();
-        }
-
-        const selectedServices = {};
-
-        function toggleService(id, price, title) {
-            const card = document.getElementById(`card-${id}`);
-            const chk = document.getElementById(`chk-${id}`);
-
-            if (selectedServices[id]) {
-                delete selectedServices[id];
-                card.classList.remove('selected');
-                chk.checked = false;
-            } else {
-                selectedServices[id] = { id, price, title };
-                card.classList.add('selected');
-                chk.checked = true;
-            }
-
-            updateTotalPrice();
-        }
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
         function calculateTotal() {
-            return Object.values(selectedServices).reduce((sum, item) => sum + item.price, 0);
+            const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
+            let total = 0;
+            checkboxes.forEach(cb => {
+                total += parseInt(cb.value);
+            });
+            document.getElementById('total-val').innerText = total;
         }
 
-        function updateTotalPrice() {
-            const total = calculateTotal();
-            document.getElementById('total-price-display').innerText = `${total} грн`;
-        }
+        function sendOrder() {
+            const name = document.getElementById('client-name').value.trim();
+            const dob = document.getElementById('client-dob').value.trim();
+            const question = document.getElementById('client-question').value.trim();
 
-        function handleConfirmClick() {
-            const total = calculateTotal();
-            const name = document.getElementById('input-name').value.trim();
-            const dob = document.getElementById('input-dob').value.trim();
+            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
-            if (total === 0) {
-                alert('Пожалуйста, выберите хотя бы один расклад!');
+            if (selectedCheckboxes.length === 0) {
+                alert("Будь ласка, оберіть хоча б одну послугу.");
                 return;
             }
 
             if (!name || !dob) {
-                alert('Пожалуйста, укажите Ваше Имя и Дату Рождения!');
+                alert("Будь ласка, вкажіть ваше ім'я та дату народження.");
                 return;
             }
 
-            const count = Object.keys(selectedServices).length;
-            document.getElementById('modal-services-count').innerText = `${count} шт.`;
-            document.getElementById('modal-total-amount').innerText = `${total} грн`;
-
-            document.getElementById('payment-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('payment-modal').classList.add('hidden');
-        }
-
-        function copyCard() {
-            const cardNumber = document.getElementById('card-number').innerText.replace(/\s+/g, '');
-            navigator.clipboard.writeText(cardNumber).then(() => {
-                if (tg && tg.showAlert) tg.showAlert("Номер карты скопирован!");
-                else alert('Номер карты скопирован!');
+            let selectedServices = [];
+            let total = 0;
+            selectedCheckboxes.forEach(cb => {
+                selectedServices.push(cb.getAttribute('data-name'));
+                total += parseInt(cb.value);
             });
-        }
-
-        function sendOrderToBot() {
-            const name = document.getElementById('input-name').value.trim();
-            const dob = document.getElementById('input-dob').value.trim();
-            const question = document.getElementById('input-question').value.trim();
-            const total = calculateTotal();
-            const servicesList = Object.values(selectedServices).map(s => s.title);
 
             const payload = {
-                action: "new_order",
                 client_name: name,
                 client_dob: dob,
-                client_question: question || "Не указан",
-                services: servicesList,
-                total_amount: total,
-                currency: "UAH"
+                client_question: question || "Без питання",
+                services: selectedServices,
+                total_amount: total
             };
 
-            if (tg && tg.sendData) {
-                tg.sendData(JSON.stringify(payload));
-            } else {
-                alert(`Заказ отправлен (тест)!\nИмя: ${name}\nСумма: ${total} грн`);
-                closeModal();
-            }
+            tg.sendData(JSON.stringify(payload));
         }
     </script>
 </body>
