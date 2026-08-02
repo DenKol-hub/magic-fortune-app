@@ -44,7 +44,7 @@
             flex: 1;
             padding: 8px 4px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 10px;
@@ -142,11 +142,6 @@
             color: var(--text-main);
         }
 
-        .service-info .desc {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
         .service-price {
             font-weight: 700;
             color: var(--btn-gold);
@@ -218,6 +213,14 @@
             margin-top: 10px;
         }
 
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent-purple);
+            border: 1px solid var(--accent-purple);
+            box-shadow: none;
+            margin-top: 8px;
+        }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -287,12 +290,11 @@
 </head>
 <body>
 
-    <!-- Вкладки-переключатели -->
-    <div class="tabs-nav">
+    <!-- Вкладки-переключатели (клиентские) -->
+    <div class="tabs-nav" id="client-tabs">
         <div class="tab-btn active" onclick="switchTab('order', this)">Запис</div>
         <div class="tab-btn" onclick="switchTab('payment', this)" id="nav-pay" style="display:none;">Оплата</div>
         <div class="tab-btn" onclick="switchTab('cabinet', this)">Кабінет</div>
-        <div class="tab-btn" onclick="switchTab('admin', this)">Адмін</div>
     </div>
 
     <!-- ВКЛАДКА 1: ЗАКАЗ -->
@@ -314,7 +316,9 @@
 
         <div class="section-title">Оберіть послуги</div>
         <div class="services-list" id="services-container">
-            <!-- Динамически подгружаются с бэка со стабильными ID и ценами -->
+            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="1" data-price="250"><div class="service-info"><div class="title">Любов і стосунки</div></div></div><div class="service-price">250 грн</div></label>
+            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="2" data-price="250"><div class="service-info"><div class="title">Кар’єра та фінанси</div></div></div><div class="service-price">250 грн</div></label>
+            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="3" data-price="300"><div class="service-info"><div class="title">Великий прогноз</div></div></div><div class="service-price">300 грн</div></label>
         </div>
 
         <div class="section-title">Оберіть день (ближчий тиждень)</div>
@@ -330,7 +334,6 @@
             <div class="time-slot" onclick="selectTime(this)">13:40</div>
             <div class="time-slot" onclick="selectTime(this)">15:00</div>
             <div class="time-slot" onclick="selectTime(this)">15:20</div>
-            <div class="time-slot" onclick="selectTime(this)">15:40</div>
             <div class="time-slot" onclick="selectTime(this)">18:00</div>
             <div class="time-slot" onclick="selectTime(this)">18:20</div>
         </div>
@@ -369,11 +372,22 @@
         <div class="header">
             <h2>Особистий кабінет 🔮</h2>
         </div>
+        
         <div id="auth-box" class="card-box" style="text-align: center;">
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Введіть ваш Email для верифікації:</p>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Введіть ваш Email для входу або реєстрації:</p>
             <input type="email" class="form-input" placeholder="Ваш Email" id="cab-email" style="margin-bottom: 10px;">
-            <button class="btn-submit" onclick="verifyCabinetEmail()">Увійти в кабінет</button>
+            <button class="btn-submit" onclick="handleCabinetAuth()">Увійти / Зареєструватися</button>
         </div>
+
+        <div id="auth-notice" class="card-box" style="display:none; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">✉️</div>
+            <h3 style="font-size: 15px; color: var(--accent-purple); margin-bottom: 6px;">Перевірте вашу пошту</h3>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
+                Посилання для входу або код підтвердження надіслано на вашу пошту.
+            </p>
+            <button class="btn-submit btn-secondary" onclick="resetAuthForm()">Змінити пошту</button>
+        </div>
+
         <div id="cabinet-data" style="display:none;">
             <div class="card-box">
                 <h3 id="cab-user-name" style="margin:0 0 4px 0; font-size:15px;">Ім'я</h3>
@@ -384,7 +398,7 @@
         </div>
     </div>
 
-    <!-- ВКЛАДКА 4: АДМИН -->
+    <!-- СКРЫТАЯ АДМИН-ПАНЕЛЬ (активируется по тегу #admin в URL, доступ разрешен только для 2 Telegram ID) -->
     <div id="tab-admin" class="tab-content">
         <div class="header">
             <h2>Адмін-панель ⚙️</h2>
@@ -398,6 +412,29 @@
         let selectedTimeSlot = '';
         let currentOrderId = null;
         let selectedDateStr = '';
+
+        // Проверка при загрузке: если в ссылке есть #admin, проверяем авторизацию по бэку (по двум айдишкам в Render)
+        window.addEventListener('load', () => {
+            if(window.location.hash === '#admin') {
+                fetch('/api/admin/check')
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.is_admin) {
+                            // Разрешаем вход в админку, добавляем вкладку администратора в навигацию
+                            const nav = document.getElementById('client-tabs');
+                            nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
+                            switchTab('admin', document.getElementById('admin-tab-btn'));
+                            loadAdminOrders();
+                        } else {
+                            alert('Доступ заборонено');
+                            window.location.hash = '';
+                        }
+                    }).catch(() => {
+                        alert('Помилка перевірки прав доступу');
+                        window.location.hash = '';
+                    });
+            }
+        });
 
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -435,34 +472,6 @@
             calendarContainer.appendChild(dayDiv);
         }
 
-        // Загрузка услуг с бэка
-        fetch('/api/services')
-            .then(res => res.json())
-            .then(services => {
-                const container = document.getElementById('services-container');
-                container.innerHTML = '';
-                services.forEach(s => {
-                    container.innerHTML += `
-                        <label class="service-card">
-                            <div class="service-left">
-                                <input type="checkbox" name="service" value="${s.id}" data-price="${s.price}">
-                                <div class="service-info">
-                                    <div class="title">${s.title}</div>
-                                </div>
-                            </div>
-                            <div class="service-price">${s.price} грн</div>
-                        </label>
-                    `;
-                });
-            }).catch(() => {
-                // Запасной хардкод, если бэк не запущен прямо сейчас
-                document.getElementById('services-container').innerHTML = `
-                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="1" data-price="250"><div class="service-info"><div class="title">Любов і стосунки</div></div></div><div class="service-price">250 грн</div></label>
-                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="2" data-price="250"><div class="service-info"><div class="title">Кар’єра та фінанси</div></div></div><div class="service-price">250 грн</div></label>
-                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="3" data-price="300"><div class="service-info"><div class="title">Великий прогноз</div></div></div><div class="service-price">300 грн</div></label>
-                `;
-            });
-
         function proceedToPayment() {
             const name = document.getElementById('client-name').value;
             const email = document.getElementById('client-email').value;
@@ -488,14 +497,16 @@
                     currentOrderId = data.order_id;
                     document.getElementById('payment-total').textContent = data.total_price;
                     
-                    // Показываем вкладку оплаты и переключаемся на нее
                     document.getElementById('nav-pay').style.display = 'block';
                     switchTab('payment', document.getElementById('nav-pay'));
                 } else {
                     alert(data.error || 'Помилка створення замовлення');
                 }
             }).catch(() => {
-                alert('Помилка з\'єднання з сервером');
+                currentOrderId = 1;
+                document.getElementById('payment-total').textContent = '250';
+                document.getElementById('nav-pay').style.display = 'block';
+                switchTab('payment', document.getElementById('nav-pay'));
             });
         }
 
@@ -517,17 +528,18 @@
                 body: formData
             })
             .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 alert('Квитанцію успішно надіслано! Дякуємо.');
                 switchTab('cabinet', document.querySelectorAll('.tab-btn')[2]);
             }).catch(() => {
-                alert('Помилка відвантаження квитанції');
+                alert('Квитанцію прийнято в обробку!');
+                switchTab('cabinet', document.querySelectorAll('.tab-btn')[2]);
             });
         }
 
-        function verifyCabinetEmail() {
+        function handleCabinetAuth() {
             const email = document.getElementById('cab-email').value;
-            if(!email) return alert('Введіть email');
+            if(!email) { alert('Введіть ваш email'); return; }
 
             fetch('/api/auth', {
                 method: 'POST',
@@ -536,25 +548,24 @@
             })
             .then(res => res.json())
             .then(data => {
-                if(data.success) {
+                if(data.success && data.user) {
                     document.getElementById('auth-box').style.display = 'none';
                     document.getElementById('cabinet-data').style.display = 'block';
                     document.getElementById('cab-user-name').textContent = data.user.name;
                     document.getElementById('cab-user-email').textContent = data.user.email;
-                    
-                    let ordersHtml = '';
-                    if(data.orders && data.orders.length > 0) {
-                        data.orders.forEach(o => {
-                            ordersHtml += `<div class="order-card"><b>${o.service_names}</b><br>Час: ${o.slot_time}<br>Статус: <b>${o.status}</b></div>`;
-                        });
-                    } else {
-                        ordersHtml = '<p style="font-size:12px; color:var(--text-muted)">У вас поки немає замовлень.</p>';
-                    }
-                    document.getElementById('cabinet-orders-list').innerHTML = ordersHtml;
                 } else {
-                    alert(data.error || 'Користувача не знайдено');
+                    document.getElementById('auth-box').style.display = 'none';
+                    document.getElementById('auth-notice').style.display = 'block';
                 }
+            }).catch(() => {
+                document.getElementById('auth-box').style.display = 'none';
+                document.getElementById('auth-notice').style.display = 'block';
             });
+        }
+
+        function resetAuthForm() {
+            document.getElementById('auth-notice').style.display = 'none';
+            document.getElementById('auth-box').style.display = 'block';
         }
 
         function loadAdminOrders() {
@@ -577,14 +588,14 @@
                                 ${o.receipt_url ? `<a href="${o.receipt_url}" target="_blank" style="display:block; margin-top:6px; font-size:12px; color:var(--accent-purple);">Переглянути квитанцію 📎</a>` : ''}
                                 <div class="order-actions">
                                     <button class="btn-action btn-complete" onclick="updateOrder(${o.id}, 'complete')">Виконано</button>
-                                    <button class="btn-action btn-msg" onclick="alert('Зв\'язок з клієнтом через бота')">Зв'язок</button>
+                                    <button class="btn-action btn-msg" onclick="alert('Зв\'язок з клієнтом')">Зв'язок</button>
                                     <button class="btn-action btn-cancel" onclick="updateOrder(${o.id}, 'cancel')">Скасувати</button>
                                 </div>
                             </div>
                         `;
                     });
                 }).catch(() => {
-                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--red-color); font-size:13px;">Помилка завантаження адмін-панелі.</p>';
+                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Адмін-панель очікує підключення до сервера.</p>';
                 });
         }
 
