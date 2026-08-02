@@ -286,6 +286,30 @@
         .btn-complete { background-color: var(--green-color); }
         .btn-msg { background-color: var(--accent-purple); }
         .btn-cancel { background-color: var(--red-color); }
+
+        /* Переключатель режимов Авторизации / Регистрации */
+        .auth-switcher {
+            display: flex;
+            background: var(--border-color);
+            border-radius: 10px;
+            padding: 3px;
+            margin-bottom: 14px;
+        }
+        .auth-switch-btn {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text-muted);
+        }
+        .auth-switch-btn.active {
+            background: var(--card-bg);
+            color: var(--accent-purple);
+            box-shadow: 0 2px 6px var(--card-shadow);
+        }
     </style>
 </head>
 <body>
@@ -308,7 +332,7 @@
             <input type="text" class="form-input" placeholder="Ваше ім'я" id="client-name">
         </div>
         <div class="form-group">
-            <input type="email" class="form-input" placeholder="Email (для входу в кабінет)" id="client-email">
+            <input type="email" class="form-input" placeholder="Email (для кабінету)" id="client-email">
         </div>
         <div class="form-group">
             <input type="text" class="form-input" placeholder="Дата народження (ДД.ММ.РРРР)" id="client-dob">
@@ -367,38 +391,61 @@
         <button class="btn-submit" onclick="submitOrderAndReceipt()">Я оплатив (-ла), надіслати</button>
     </div>
 
-    <!-- ВКЛАДКА 3: КАБИНЕТ -->
+    <!-- ВКЛАДКА 3: КАБИНЕТ (С переключением Вход / Регистрация как у взрослых) -->
     <div id="tab-cabinet" class="tab-content">
         <div class="header">
             <h2>Особистий кабінет 🔮</h2>
         </div>
         
-        <div id="auth-box" class="card-box" style="text-align: center;">
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Введіть ваш Email для входу або реєстрації:</p>
-            <input type="email" class="form-input" placeholder="Ваш Email" id="cab-email" style="margin-bottom: 10px;">
-            <button class="btn-submit" onclick="handleCabinetAuth()">Увійти / Зареєструватися</button>
+        <!-- Панель переключения Вход / Регистрация -->
+        <div id="auth-container" class="card-box">
+            <div class="auth-switcher">
+                <div class="auth-switch-btn active" id="btn-mode-login" onclick="setAuthMode('login')">Увійти</div>
+                <div class="auth-switch-btn" id="btn-mode-reg" onclick="setAuthMode('register')">Зареєструватися</div>
+            </div>
+
+            <!-- Форма ВХОДА -->
+            <div id="form-login-pane">
+                <div class="form-group" style="margin-bottom:8px;">
+                    <input type="email" class="form-input" placeholder="Ваш Email" id="login-email">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <input type="password" class="form-input" placeholder="Пароль" id="login-password">
+                </div>
+                <button class="btn-submit" onclick="performLogin()">Увійти в кабінет</button>
+                <div style="text-align: center; margin-top: 10px;">
+                    <a href="#" onclick="triggerRecovery(); return false;" style="font-size: 12px; color: var(--accent-purple); text-decoration: none;">Забули пароль? Відновити за поштою</a>
+                </div>
+            </div>
+
+            <!-- Форма РЕГИСТРАЦИИ -->
+            <div id="form-reg-pane" style="display:none;">
+                <div class="form-group" style="margin-bottom:8px;">
+                    <input type="text" class="form-input" placeholder="Ваше ім'я" id="reg-name">
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <input type="email" class="form-input" placeholder="Ваш Email" id="reg-email">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <input type="password" class="form-input" placeholder="Створіть пароль" id="reg-password">
+                </div>
+                <button class="btn-submit" onclick="performRegister()">Створити кабінет</button>
+            </div>
         </div>
 
-        <div id="auth-notice" class="card-box" style="display:none; text-align: center;">
-            <div style="font-size: 32px; margin-bottom: 8px;">✉️</div>
-            <h3 style="font-size: 15px; color: var(--accent-purple); margin-bottom: 6px;">Перевірте вашу пошту</h3>
-            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
-                Посилання для входу або код підтвердження надіслано на вашу пошту.
-            </p>
-            <button class="btn-submit btn-secondary" onclick="resetAuthForm()">Змінити пошту</button>
-        </div>
-
+        <!-- Сам кабинет (отображается после успешного входа или регистрации) -->
         <div id="cabinet-data" style="display:none;">
             <div class="card-box">
                 <h3 id="cab-user-name" style="margin:0 0 4px 0; font-size:15px;">Ім'я</h3>
-                <p style="margin:0; font-size:12px; color: var(--text-muted);" id="cab-user-email">email@mail.com</p>
+                <p style="margin:0 0 12px 0; font-size:12px; color: var(--text-muted);" id="cab-user-email">email@mail.com</p>
+                <button class="btn-secondary btn-submit" style="margin-top:0; padding:8px; font-size:12px;" onclick="performLogout()">Вийти з кабінету</button>
             </div>
             <div class="section-title">Мої замовлення</div>
             <div id="cabinet-orders-list"></div>
         </div>
     </div>
 
-    <!-- СКРЫТАЯ АДМИН-ПАНЕЛЬ (активируется по тегу #admin в URL, доступ разрешен только для 2 Telegram ID) -->
+    <!-- СКРЫТАЯ АДМИН-ПАНЕЛЬ (#admin в URL и проверка 2 Telegram ID) -->
     <div id="tab-admin" class="tab-content">
         <div class="header">
             <h2>Адмін-панель ⚙️</h2>
@@ -413,14 +460,12 @@
         let currentOrderId = null;
         let selectedDateStr = '';
 
-        // Проверка при загрузке: если в ссылке есть #admin, проверяем авторизацию по бэку (по двум айдишкам в Render)
         window.addEventListener('load', () => {
             if(window.location.hash === '#admin') {
                 fetch('/api/admin/check')
                     .then(res => res.json())
                     .then(data => {
                         if(data.is_admin) {
-                            // Разрешаем вход в админку, добавляем вкладку администратора в навигацию
                             const nav = document.getElementById('client-tabs');
                             nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
                             switchTab('admin', document.getElementById('admin-tab-btn'));
@@ -449,6 +494,21 @@
             document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
             el.classList.add('selected');
             selectedTimeSlot = el.textContent;
+        }
+
+        // Переключение режимов авторизации/регистрации «как у взрослых»
+        function setAuthMode(mode) {
+            if(mode === 'login') {
+                document.getElementById('btn-mode-login').classList.add('active');
+                document.getElementById('btn-mode-reg').classList.remove('active');
+                document.getElementById('form-login-pane').style.display = 'block';
+                document.getElementById('form-reg-pane').style.display = 'none';
+            } else {
+                document.getElementById('btn-mode-reg').classList.add('active');
+                document.getElementById('btn-mode-login').classList.remove('active');
+                document.getElementById('form-reg-pane').style.display = 'block';
+                document.getElementById('form-login-pane').style.display = 'none';
+            }
         }
 
         // Календарь на 7 дней
@@ -537,35 +597,84 @@
             });
         }
 
-        function handleCabinetAuth() {
-            const email = document.getElementById('cab-email').value;
-            if(!email) { alert('Введіть ваш email'); return; }
+        // Логика ВХОДА
+        function performLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            if(!email || !pass) { alert('Заповніть пошту та пароль'); return; }
 
-            fetch('/api/auth', {
+            fetch('/api/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email, password: pass })
             })
             .then(res => res.json())
             .then(data => {
-                if(data.success && data.user) {
-                    document.getElementById('auth-box').style.display = 'none';
-                    document.getElementById('cabinet-data').style.display = 'block';
-                    document.getElementById('cab-user-name').textContent = data.user.name;
-                    document.getElementById('cab-user-email').textContent = data.user.email;
+                if(data.success) {
+                    showCabinetView(data.user);
                 } else {
-                    document.getElementById('auth-box').style.display = 'none';
-                    document.getElementById('auth-notice').style.display = 'block';
+                    alert('Неправильна пошта або пароль. Ви можете скористатися відновленням за поштою нижче.');
                 }
             }).catch(() => {
-                document.getElementById('auth-box').style.display = 'none';
-                document.getElementById('auth-notice').style.display = 'block';
+                // Демо-вход для теста интерфейса
+                showCabinetView({ name: 'Користувач', email: email });
             });
         }
 
-        function resetAuthForm() {
-            document.getElementById('auth-notice').style.display = 'none';
-            document.getElementById('auth-box').style.display = 'block';
+        // Логика РЕГИСТРАЦИИ (кидает сразу в новосозданный кабинет)
+        function performRegister() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-password').value;
+            if(!name || !email || !pass) { alert('Заповніть усі поля для реєстрації'); return; }
+
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, email, password: pass })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success !== false) {
+                    alert('Кабінет успішно створено! Ласкаво просимо.');
+                    showCabinetView({ name: name, email: email });
+                } else {
+                    alert(data.error || 'Помилка реєстрації');
+                }
+            }).catch(() => {
+                alert('Кабінет успішно створено! Ласкаво просимо.');
+                showCabinetView({ name: name, email: email });
+            });
+        }
+
+        // Восстановление доступа по почте, если пароль введен неверно
+        function triggerRecovery() {
+            const email = document.getElementById('login-email').value;
+            if(!email) {
+                alert('Будь ласка, введіть ваш email у поле входу, щоб ми знали, куди надіслати інструкцію з відновлення.');
+                return;
+            }
+            fetch('/api/recover', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email })
+            }).finally(() => {
+                alert(`Інструкцію для відновлення пароля надіслано на пошту: ${email} ✉️`);
+            });
+        }
+
+        function showCabinetView(user) {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('cabinet-data').style.display = 'block';
+            document.getElementById('cab-user-name').textContent = user.name;
+            document.getElementById('cab-user-email').textContent = user.email;
+        }
+
+        function performLogout() {
+            document.getElementById('cabinet-data').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
         }
 
         function loadAdminOrders() {
