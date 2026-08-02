@@ -1,175 +1,224 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Админ Панель</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмін-панель | Таємниці Долі</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ee;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(180, 170, 160, 0.2);
+            --btn-gold: #c6a258;
+            --btn-gold-hover: #b59247;
+            --text-main: #2b2825;
+            --text-muted: #726c65;
+            --border-color: #e6dfd3;
+            --green-color: #4a7c59;
+        }
 
-    h2, h3 { color: #bb86fc; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    .card {
-      background: #1e1e1e;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 16px;
-      border: 1px solid #333;
-    }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 8px;
+        }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: #4a3366;
+            background: rgba(191, 168, 226, 0.3);
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
 
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #2a2a2a;
-      color: white;
-      box-sizing: border-box;
-    }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-    button.btn-action {
-      background: #bb86fc;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            text-align: center;
+        }
 
-    button.btn-ban { background: #cf6679; color: white; border: none; }
-    button.btn-done { background: #03dac6; color: black; border: none; }
+        .stat-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
 
-    .order-img { max-width: 100%; border-radius: 6px; margin-top: 8px; }
-  </style>
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--btn-gold);
+        }
+
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .order-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .client-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
+        .order-sum {
+            font-weight: 700;
+            color: var(--btn-gold);
+            font-size: 15px;
+        }
+
+        .order-details {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .order-details span {
+            display: block;
+            color: var(--text-main);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-approve {
+            background-color: var(--green-color);
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #d9534f;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
-  <h2>👑 Админ-Панель</h2>
-  
-  <!-- Статистика -->
-  <div class="card grid">
-    <div>Всего заказов: <b id="stat-orders">0</b></div>
-    <div>Выручка: <b id="stat-revenue">0</b> грн</div>
-  </div>
+    <div class="header">
+        <h2>Панель Адміністратора ⚙️</h2>
+    </div>
 
-  <!-- Управление слотами созвонов -->
-  <div class="card">
-    <h3>📅 Добавить слот созвона</h3>
-    <input type="date" id="slot-date">
-    <input type="text" id="slot-time" placeholder="Пример: 14:00 - 14:40">
-    <button class="btn-action" onclick="addSlot()">Добавить слот</button>
-  </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title">Замовлень сьогодні</div>
+            <div class="stat-value" id="orders-count">3</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Виручка</div>
+            <div class="stat-value" id="total-revenue">650 грн</div>
+        </div>
+    </div>
 
-  <!-- Список заказов -->
-  <h3>📥 Активные и новые заказы</h3>
-  <div id="orders-list"></div>
+    <div class="section-title">Нові замовлення</div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    const API_URL = window.location.origin;
+    <div class="orders-list" id="admin-orders-container">
+        <div class="order-card">
+            <div class="order-header">
+                <span class="client-name">Анна (12.05.1995)</span>
+                <span class="order-sum">250 грн</span>
+            </div>
+            <div class="order-details">
+                Послуги: <span>Любов і стосунки, Кар’єра та фінанси</span>
+                Запитання: <span>Чи зміниться ситуація на роботі найближчим часом?</span>
+            </div>
+            <div class="order-actions">
+                <button class="btn-action btn-approve" onclick="completeOrder(this)">Підтвердити / Виконано</button>
+                <button class="btn-action btn-cancel" onclick="cancelOrder(this)">Відхилити</button>
+            </div>
+        </div>
 
-    // Загрузка админ-данных
-    async function loadAdminData() {
-      const res = await fetch(`${API_URL}/api/admin/data`);
-      const data = await res.json();
+        <div class="order-card">
+            <div class="order-header">
+                <span class="client-name">Максим (03.11.1990)</span>
+                <span class="order-sum">300 грн</span>
+            </div>
+            <div class="order-details">
+                Послуги: <span>Великий прогноз на 3 місяці</span>
+                Запитання: <span>Без питання</span>
+            </div>
+            <div class="order-actions">
+                <button class="btn-action btn-approve" onclick="completeOrder(this)">Підтвердити / Виконано</button>
+                <button class="btn-action btn-cancel" onclick="cancelOrder(this)">Відхилити</button>
+            </div>
+        </div>
+    </div>
 
-      document.getElementById('stat-orders').innerText = data.stats.total_orders;
-      document.getElementById('stat-revenue').innerText = data.stats.total_revenue;
+    <script>
+        function completeOrder(btn) {
+            const card = btn.closest('.order-card');
+            card.style.opacity = '0.5';
+            btn.textContent = 'Виконано ✓';
+            btn.disabled = true;
+        }
 
-      const container = document.getElementById('orders-list');
-      container.innerHTML = '';
-
-      data.orders.forEach(o => {
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        let photoHTML = o.client_photo ? `<br><b>Фото клиента:</b><br><img src="${API_URL}${o.client_photo}" class="order-img">` : '';
-
-        card.innerHTML = `
-          <h4>Заказ #${o.order_id} — ${o.name} (@${o.username})</h4>
-          <p>🆔 ID: ${o.user_id} | ДР: ${o.dob}</p>
-          <p>🔮 Услуги: <b>${o.services}</b> (${o.total} грн)</p>
-          <p>📞 Созвон: <b>${o.slot}</b></p>
-          <p>💬 Вопрос: <i>${o.question}</i></p>
-          ${photoHTML}
-          <hr style="border-color:#333;">
-
-          <!-- Форма ответа -->
-          <textarea id="reply-text-${o.order_id}" placeholder="Текст ответа клиенту..."></textarea>
-          <label style="font-size:12px; color:#aaa;">Прикрепить фото расклада:</label>
-          <input type="file" id="reply-photo-${o.order_id}" accept="image/*">
-          
-          <div class="grid" style="margin-top: 10px;">
-            <button class="btn-action" onclick="sendReply(${o.order_id})">✉️ Отправить ответ</button>
-            <button class="btn-done" onclick="completeOrder(${o.order_id})">✅ Завершить</button>
-          </div>
-          <button class="btn-ban" style="margin-top:8px;" onclick="banUser(${o.user_id})">⛔ Заблокировать</button>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // Добавление слота
-    async function addSlot() {
-      const date = document.getElementById('slot-date').value;
-      const time = document.getElementById('slot-time').value;
-
-      const formData = new FormData();
-      formData.append('slot_date', date);
-      formData.append('slot_time', time);
-
-      await fetch(`${API_URL}/api/admin/slots/add`, { method: 'POST', body: formData });
-      alert('Слот добавлен!');
-    }
-
-    // Отправка ответа пользователю
-    async function sendReply(orderId) {
-      const text = document.getElementById(`reply-text-${orderId}`).value;
-      const photoFile = document.getElementById(`reply-photo-${orderId}`).files[0];
-
-      const formData = new FormData();
-      formData.append('order_id', orderId);
-      formData.append('text', text);
-      if (photoFile) formData.append('reply_photo', photoFile);
-
-      const res = await fetch(`${API_URL}/api/admin/reply`, { method: 'POST', body: formData });
-      const data = await res.json();
-      if(data.status === 'ok') {
-        alert('Ответ отправлен клиенту в бот и добавлен в ЛК!');
-        loadAdminData();
-      }
-    }
-
-    // Завершить заказ
-    async function completeOrder(orderId) {
-      const formData = new FormData();
-      formData.append('order_id', orderId);
-      await fetch(`${API_URL}/api/admin/complete-order`, { method: 'POST', body: formData });
-      loadAdminData();
-    }
-
-    // Забанить
-    async function banUser(userId) {
-      await fetch(`${API_URL}/api/admin/ban`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, action: 'ban' })
-      });
-      alert('Забанен!');
-      loadAdminData();
-    }
-
-    loadAdminData();
-  </script>
+        function cancelOrder(btn) {
+            const card = btn.closest('.order-card');
+            card.remove();
+        }
+    </script>
 </body>
 </html>
