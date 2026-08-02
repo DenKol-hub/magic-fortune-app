@@ -255,7 +255,6 @@
             font-size: 13px;
         }
 
-        /* Уведомление о текущей/активной записи в кабинете */
         .active-booking-alert {
             background: linear-gradient(135deg, rgba(198, 162, 88, 0.15) 0%, rgba(191, 168, 226, 0.2) 100%);
             border: 1px solid var(--btn-gold);
@@ -475,6 +474,7 @@
                 <button class="btn-submit" onclick="performRegister()">Створити кабінет</button>
             </div>
 
+            <!-- Реальная проверка кода на бэкенде -->
             <div id="email-verification-pane" style="display:none; text-align: center; padding: 10px 0;">
                 <div style="font-size: 38px; margin-bottom: 10px;">✉️</div>
                 <h3 style="font-size: 15px; color: var(--accent-purple); margin-bottom: 6px;">Підтвердіть вашу пошту</h3>
@@ -498,7 +498,6 @@
                 <button class="profile-logout-btn" onclick="performLogout()">Вийти</button>
             </div>
 
-            <!-- Уведомление о текущей/активной записи, если она есть -->
             <div id="active-booking-notification" style="display: none;"></div>
 
             <div class="section-title">Історія замовлень</div>
@@ -689,6 +688,7 @@
             document.getElementById('form-reg-pane').style.display = 'none';
             document.querySelector('.auth-switcher').style.display = 'none';
             document.getElementById('verify-target-email').textContent = email;
+            document.getElementById('email-verification-verification-pane')?.style; // safe ref
             document.getElementById('email-verification-pane').style.display = 'block';
         }
 
@@ -698,6 +698,7 @@
             setAuthMode('login');
         }
 
+        // СТРОГАЯ ПРОВЕРКА КОДА НА СЕРВЕРЕ (теперь рандомные цифры не пройдут)
         function verifyEmailCode() {
             const code = document.getElementById('verification-code-input').value;
             if(!code) { alert('Введіть код з пошти'); return; }
@@ -709,15 +710,14 @@
             })
             .then(res => res.json())
             .then(data => {
-                if(data.success !== false) {
+                if(data.success) {
                     showCabinetView({ name: pendingVerificationName, email: pendingVerificationEmail });
                     loadUserOrders(pendingVerificationEmail);
                 } else {
-                    alert('Неправильний код підтвердження');
+                    alert('Неправильний або прострочений код підтвердження. Будь ласка, перевірте пошту.');
                 }
             }).catch(() => {
-                showCabinetView({ name: pendingVerificationName, email: pendingVerificationEmail });
-                loadUserOrders(pendingVerificationEmail);
+                alert('Помилка сервера перевірки. Перевірте правильність введеного коду.');
             });
         }
 
@@ -755,7 +755,6 @@
             document.getElementById('verification-code-input').value = '';
         }
 
-        // Загрузка истории заказов + автоматическое уведомление о текущей (активной) записи
         function loadUserOrders(email) {
             fetch(`/api/user/orders?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
@@ -769,7 +768,6 @@
                         return;
                     }
 
-                    // Ищем активную запись (например, со статусом "В обробці", "Очікує оплати" или "Активний")
                     const activeOrder = orders.find(o => {
                         const s = (o.status || '').toLowerCase();
                         return s.includes('обробк') || s.includes('очіку') || s.includes('актив') || s.includes('нове');
@@ -789,7 +787,6 @@
                         alertBox.style.display = 'none';
                     }
 
-                    // Выводим всю историю заказов списком ниже
                     list.innerHTML = '';
                     orders.forEach(o => {
                         list.innerHTML += `
@@ -802,7 +799,6 @@
                         `;
                     });
                 }).catch(() => {
-                    // Фолбек на случай локального теста без бэка
                     document.getElementById('cabinet-orders-list').innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Історія замовлень порожня.</p>';
                 });
         }
