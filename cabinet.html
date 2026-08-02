@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Особистий кабінет | Таємниці Долі</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ee;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(180, 170, 160, 0.2);
+            --btn-gold: #c6a258;
+            --text-main: #2b2825;
+            --text-muted: #726c65;
+            --border-color: #e6dfd3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 8px;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: #4a3366;
+            background: rgba(191, 168, 226, 0.3);
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(191, 168, 226, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .profile-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        .profile-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .history-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .history-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .history-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background-color: #e2f0d9;
+            color: #385723;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Особистий кабінет 🔮</h2>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-avatar">✨</div>
+        <div class="profile-info">
+            <h3 id="user-name">Анна</h3>
+            <p>Дата народження: <span id="user-dob">12.05.1995</span></p>
+        </div>
+    </div>
+
+    <div class="section-title">Історія ваших замовлень</div>
+
+    <div class="history-list">
+        <div class="history-card">
+            <div class="history-top">
+                <span>02.08.2026</span>
+                <span style="font-weight: 700; color: var(--btn-gold);">250 грн</span>
+            </div>
+            <div class="history-title">Любов і стосунки, Кар’єра та фінанси</div>
+            <div style="margin-bottom: 10px; font-size: 13px; color: var(--text-muted);">Статус запиту: обробляється тарологом</div>
+            <span class="history-status">Оплачено</span>
+        </div>
+    </div>
+
+</body>
+</html>
