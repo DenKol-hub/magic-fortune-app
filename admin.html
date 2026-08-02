@@ -1,186 +1,230 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ Панель</title>
+    <title>Панель Управління</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #f7f4ee;
-            --card-bg: #ffffff;
-            --btn-gold: #c6a258;
-            --text-main: #2b2825;
-            --text-muted: #726c65;
+            --bg-color: #f7f4ee;         /* Молочно-кремовый фон */
+            --card-bg: #ffffff;         /* Белые карточки */
+            --card-shadow: rgba(180, 170, 160, 0.15); /* Легкая тень */
+            --btn-gold: #c6a258;        /* Матовое золото */
+            --btn-gold-hover: #b59247;  
+            --text-main: #2b2825;       /* Темный графитовый */
+            --text-muted: #726c65;      /* Приглушенный */
+            --accent-lavender: #bfa8e2;  /* Нежная лаванда */
+            --border-color: #eee9e0;     
             --danger-color: #e74c3c;
-            --border-color: #eee9e0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0; 
+            margin: 0;
             padding: 16px;
+            padding-bottom: 30px;
             box-sizing: border-box;
         }
 
-        .header { 
-            text-align: center; 
-            margin-bottom: 20px; 
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 8px;
         }
 
         .header h2 {
-            font-size: 18px; 
-            margin: 0; 
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
             color: #4a3366;
             background: rgba(191, 168, 226, 0.25);
-            display: inline-block; 
-            padding: 6px 16px; 
+            display: inline-block;
+            padding: 6px 16px;
             border-radius: 20px;
         }
 
         .stats-grid {
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
-            background: var(--card-bg); 
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 12px; 
-            border-radius: 12px; 
+            border-radius: 14px;
+            padding: 14px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px var(--card-shadow);
         }
 
-        .stat-val { 
-            font-size: 18px; 
-            font-weight: bold; 
-            color: var(--btn-gold); 
+        .stat-val {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--btn-gold);
         }
 
-        .stat-lbl { 
-            font-size: 11px; 
-            color: var(--text-muted); 
-            margin-top: 2px;
-        }
-
-        .section-title { 
-            font-size: 13px; 
-            font-weight: bold; 
-            margin: 16px 0 8px 0; 
-            text-transform: uppercase; 
-            color: var(--text-muted); 
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .order-card {
-            background: var(--card-bg); 
+        .form-section {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px; 
-            padding: 14px; 
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px var(--card-shadow);
         }
 
-        .order-header { 
-            display: flex; 
-            justify-content: space-between; 
-            font-weight: bold; 
-            font-size: 14px; 
-            margin-bottom: 6px; 
+        .form-section h3 {
+            font-size: 13px;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
         }
 
-        .order-info { 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            line-height: 1.5; 
-            margin-bottom: 12px; 
+        .input-group { margin-bottom: 12px; }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: var(--text-muted);
         }
 
-        .actions { 
-            display: flex; 
-            gap: 8px; 
+        .input-group input {
+            width: 100%;
+            padding: 11px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
         }
 
-        .btn {
-            flex: 1; 
-            border: none; 
-            padding: 9px; 
-            border-radius: 8px;
-            font-weight: bold; 
-            font-size: 12px; 
-            cursor: pointer; 
+        .ban-btn-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            background-color: var(--btn-gold);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            padding: 11px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
             text-align: center;
         }
 
-        .btn-reply { 
-            background: var(--btn-gold); 
-            color: white; 
+        .btn-action.danger {
+            background-color: var(--danger-color);
         }
 
-        .btn-ban { 
-            background: var(--danger-color); 
-            color: white; 
-        }
-
-        .ban-input-box {
-            display: flex; 
-            gap: 8px; 
-            margin-bottom: 16px;
-        }
-
-        .ban-input-box input {
-            flex: 1; 
-            padding: 10px; 
+        .order-card {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px; 
-            outline: none; 
-            background: var(--card-bg);
-            font-size: 13px;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .order-price {
+            color: var(--btn-gold);
+            font-weight: 700;
+        }
+
+        .order-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .order-info strong {
+            color: var(--text-main);
+        }
+
+        .order-question {
+            background: var(--bg-color);
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-style: italic;
+            margin-top: 6px;
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>👑 Панель Управления</h2>
+        <h2>Панель Управління 👑</h2>
     </div>
 
     <!-- СТАТИСТИКА -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-val" id="st-revenue">0 грн</div>
-            <div class="stat-lbl">Общая выручка</div>
+            <div class="stat-lbl">Загальний виторг</div>
         </div>
         <div class="stat-card">
             <div class="stat-val" id="st-orders">0</div>
-            <div class="stat-lbl">Заказов выполнено</div>
+            <div class="stat-lbl">Виконано замовлень</div>
         </div>
     </div>
 
-    <!-- БАН ПО ID -->
-    <div class="section-title">⛔ Управление Банами</div>
-    <div class="ban-input-box">
-        <input type="number" id="ban-id-input" placeholder="Telegram ID">
-        <button class="btn btn-ban" onclick="manualBan('ban')">Забанить</button>
-        <button class="btn btn-reply" onclick="manualBan('unban')">Разбанить</button>
+    <!-- УПРАВЛЕНИЕ БАНАМИ -->
+    <div class="form-section">
+        <h3>⛔ Управління блокуваннями</h3>
+        <div class="input-group">
+            <label>Telegram ID користувача</label>
+            <input type="number" id="ban-id-input" placeholder="Наприклад: 123456789">
+        </div>
+        <div class="ban-btn-row">
+            <button class="btn-action danger" onclick="manualBan('ban')">Заблокувати</button>
+            <button class="btn-action" onclick="manualBan('unban')">Розблокувати</button>
+        </div>
     </div>
 
     <!-- АКТИВНЫЕ ЗАКАЗЫ -->
-    <div class="section-title">📋 Активные заказы</div>
-    <div id="orders-container">
-        <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Загрузка заказов...</p>
+    <div class="form-section" style="margin-bottom: 0;">
+        <h3>📋 Активні замовлення</h3>
+        <div id="orders-container">
+            <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Завантаження...</p>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 📌 ВАШ URL БЭКЕНДА НА RENDER:
         const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com";
 
         async function loadAdminData() {
@@ -188,16 +232,14 @@
                 const res = await fetch(`${BACKEND_URL}/api/admin/data`);
                 const data = await res.json();
 
-                // Обновляем показатели статистики
                 document.getElementById('st-revenue').innerText = `${data.stats.total_revenue} грн`;
                 document.getElementById('st-orders').innerText = data.stats.total_orders;
 
-                // Отрисовываем активные заказы
                 const container = document.getElementById('orders-container');
                 container.innerHTML = '';
 
                 if (!data.active_orders || data.active_orders.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Активных заказов пока нет ✨</p>';
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px; margin: 10px 0;">Активних замовлень немає ✨</p>';
                     return;
                 }
 
@@ -207,27 +249,25 @@
                     card.innerHTML = `
                         <div class="order-header">
                             <span>${order.name} (${order.username})</span>
-                            <span style="color: var(--btn-gold);">${order.total} грн</span>
+                            <span class="order-price">${order.total} грн</span>
                         </div>
                         <div class="order-info">
-                            <b>ID:</b> <code>${order.user_id}</code> | <b>Возраст:</b> ${order.age} (ДР: ${order.dob})<br>
-                            <b>Заказано:</b> ${order.services.join(', ')}<br>
-                            <b>Вопрос:</b> <i>${order.question}</i>
+                            <b>ID:</b> <code>${order.user_id}</code> | <b>Вік:</b> ${order.age} (ДН: ${order.dob})<br>
+                            <b>Послуги:</b> ${order.services.join(', ')}
+                            <div class="order-question">"${order.question}"</div>
                         </div>
-                        <div class="actions">
-                            <button class="btn btn-ban" onclick="banUser(${order.user_id})">Забанить клиента</button>
-                        </div>
+                        <button class="btn-action danger" style="width: 100%;" onclick="banUser(${order.user_id})">Заблокувати клієнта</button>
                     `;
                     container.appendChild(card);
                 });
 
             } catch (err) {
-                console.error("Ошибка получения данных админки:", err);
+                console.error("Помилка завантаження даних:", err);
             }
         }
 
         async function banUser(userId) {
-            if (!confirm(`Вы точно хотите заблокировать пользователя ID: ${userId}?`)) return;
+            if (!confirm(`Ви точно бажаєте заблокувати ID: ${userId}?`)) return;
 
             await fetch(`${BACKEND_URL}/api/admin/ban`, {
                 method: 'POST',
@@ -241,7 +281,7 @@
         async function manualBan(action) {
             const input = document.getElementById('ban-id-input');
             const uid = input.value.trim();
-            if (!uid) return alert("Введите Telegram ID!");
+            if (!uid) return alert("Введіть Telegram ID!");
 
             await fetch(`${BACKEND_URL}/api/admin/ban`, {
                 method: 'POST',
@@ -249,12 +289,11 @@
                 body: JSON.stringify({ user_id: uid, action: action })
             });
 
-            alert(`Действие "${action}" для ID ${uid} выполнено.`);
+            alert(`Дія "${action}" для ID ${uid} виконана.`);
             input.value = '';
             loadAdminData();
         }
 
-        // Первичная загрузка и автообновление каждые 10 секунд
         loadAdminData();
         setInterval(loadAdminData, 10000);
     </script>
