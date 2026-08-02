@@ -3,842 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таємниці Долі</title>
+    <title>Консультації & Сервіс</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f7f4ee;
+            --bg-color: #f9f8f6;
             --card-bg: #ffffff;
-            --card-shadow: rgba(180, 170, 160, 0.2);
-            --btn-gold: #c6a258;
-            --btn-gold-hover: #b59247;
-            --text-main: #2b2825;
-            --text-muted: #726c65;
-            --border-color: #e6dfd3;
-            --accent-purple: #4a3366;
-            --accent-lavender: #bfa8e2;
-            --green-color: #4a7c59;
-            --red-color: #d9534f;
+            --accent: #94a3b8;
+            --accent-hover: #64748b;
+            --text-dark: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --info-bg: #f1f5f9;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 16px;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); padding: 1rem; }
+
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+
+        h2 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--text-dark); font-weight: 600; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+        
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea {
+            width: 100%; padding: 0.75rem 0.9rem; border-radius: 10px; border: 1px solid var(--border);
+            background: #fafafa; font-size: 0.95rem; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); }
+
+        .btn {
+            background: var(--accent); color: white; border: none; width: 100%; padding: 0.8rem;
+            border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.2s;
+        }
+        .btn:hover { background: var(--accent-hover); }
+
+        .info-box {
+            background: var(--info-bg); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;
+            display: flex; gap: 0.8rem; align-items: center; font-size: 0.85rem; color: #475569;
         }
 
-        .tabs-nav {
-            display: flex;
-            background: var(--border-color);
-            border-radius: 14px;
-            padding: 4px;
-            margin-bottom: 20px;
-            gap: 4px;
+        .checkbox-item {
+            display: flex; align-items: center; justify-content: space-between; padding: 0.7rem;
+            border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.5rem; background: #fafafa;
         }
+        .checkbox-item input { margin-right: 0.5rem; }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px 4px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 10px;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background: var(--card-bg);
-            color: var(--accent-purple);
-            box-shadow: 0 2px 8px var(--card-shadow);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h2 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-            color: var(--accent-purple);
-            background: rgba(191, 168, 226, 0.3);
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 10px;
-            margin-top: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--btn-gold);
-        }
-
-        .services-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .service-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 12px 16px;
-            box-shadow: 0 4px 12px var(--card-shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .service-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .service-card input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--btn-gold);
-            cursor: pointer;
-        }
-
-        .service-info .title {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-main);
-        }
-
-        .service-price {
-            font-weight: 700;
-            color: var(--btn-gold);
-            font-size: 14px;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .calendar-day {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 8px 2px;
-            text-align: center;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .calendar-day.selected {
-            background: var(--accent-lavender);
-            border-color: var(--accent-purple);
-            color: var(--accent-purple);
-            font-weight: 700;
-        }
-
-        .time-slots {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
-        }
-
-        .time-slot {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .time-slot.selected {
-            background: var(--btn-gold);
-            color: white;
-            border-color: var(--btn-gold);
-            font-weight: 600;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background-color: var(--btn-gold);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(198, 162, 88, 0.3);
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-        .btn-submit:hover {
-            background-color: var(--btn-gold-hover);
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--accent-purple);
-            border: 1px solid var(--accent-purple);
-            box-shadow: none;
-            margin-top: 8px;
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .card-box {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 6px 16px var(--card-shadow);
-            margin-bottom: 16px;
-        }
-
-        .requisites-box {
-            background: rgba(198, 162, 88, 0.1);
-            border: 1px dashed var(--btn-gold);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        .order-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px;
-            box-shadow: 0 4px 12px var(--card-shadow);
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-
-        .active-booking-alert {
-            background: linear-gradient(135deg, rgba(198, 162, 88, 0.15) 0%, rgba(191, 168, 226, 0.2) 100%);
-            border: 1px solid var(--btn-gold);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-        .active-booking-alert h4 {
-            margin: 0 0 6px 0;
-            color: var(--accent-purple);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .active-booking-alert p {
-            margin: 0;
-            font-size: 13px;
-            color: var(--text-main);
-            line-height: 1.4;
-        }
-
-        .order-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            font-size: 11px;
-            cursor: pointer;
-            color: white;
-        }
-        .btn-complete { background-color: var(--green-color); }
-        .btn-msg { background-color: var(--accent-purple); }
-        .btn-cancel { background-color: var(--red-color); }
-
-        .auth-switcher {
-            display: flex;
-            background: var(--border-color);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 16px;
-        }
-        .auth-switch-btn {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 10px;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .auth-switch-btn.active {
-            background: var(--card-bg);
-            color: var(--accent-purple);
-            box-shadow: 0 2px 8px var(--card-shadow);
-        }
-
-        .profile-card {
-            background: linear-gradient(135deg, #4a3366 0%, #6b4d92 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 16px rgba(74, 51, 102, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .profile-info h3 {
-            margin: 0 0 4px 0;
-            font-size: 17px;
-            font-weight: 600;
-        }
-        .profile-info p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.85;
-        }
-        .profile-logout-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .profile-logout-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
+        .order-card { background: #fafafa; border-left: 4px solid var(--accent); padding: 0.9rem; border-radius: 8px; margin-bottom: 0.8rem; }
+        .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: var(--border); }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="tabs-nav" id="client-tabs">
-        <div class="tab-btn active" onclick="switchTab('order', this)">Запис</div>
-        <div class="tab-btn" onclick="switchTab('cabinet', this)">Кабінет</div>
-    </div>
-
-    <!-- ВКЛАДКА 1: ЗАКАЗ -->
-    <div id="tab-order" class="tab-content active">
-        <div class="header">
-            <h2>Вас вітає Корнелія ✨</h2>
+    <div class="container">
+        <div class="info-box">
+            <span style="font-size: 1.5rem;">📱</span>
+            <div><strong>Зверніть увагу:</strong> Усі консультації та дзвінки проходять виключно у цьому Telegram-боті.</div>
         </div>
 
-        <div class="form-group">
-            <div class="section-title">Ваші дані</div>
-            <input type="text" class="form-input" placeholder="Ваше ім'я" id="client-name">
-        </div>
-        <div class="form-group">
-            <input type="email" class="form-input" placeholder="Email (для кабінету)" id="client-email">
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-input" placeholder="Дата народження (ДД.ММ.РРРР)" id="client-dob">
-        </div>
-
-        <div class="section-title">Оберіть послуги</div>
-        <div class="services-list" id="services-container">
-            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="1" data-price="250"><div class="service-info"><div class="title">Любов і стосунки</div></div></div><div class="service-price">250 грн</div></label>
-            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="2" data-price="250"><div class="service-info"><div class="title">Кар’єра та фінанси</div></div></div><div class="service-price">250 грн</div></label>
-            <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="3" data-price="300"><div class="service-info"><div class="title">Великий прогноз</div></div></div><div class="service-price">300 грн</div></label>
-        </div>
-
-        <div class="section-title">Оберіть день (ближчий тиждень)</div>
-        <div class="calendar-grid" id="calendar-days"></div>
-
-        <div class="section-title">Оберіть час (інтервал 20 хв)</div>
-        <div class="time-slots" id="time-slots">
-            <div class="time-slot" onclick="selectTime(this)">12:00</div>
-            <div class="time-slot" onclick="selectTime(this)">12:20</div>
-            <div class="time-slot" onclick="selectTime(this)">12:40</div>
-            <div class="time-slot" onclick="selectTime(this)">13:00</div>
-            <div class="time-slot" onclick="selectTime(this)">13:20</div>
-            <div class="time-slot" onclick="selectTime(this)">13:40</div>
-            <div class="time-slot" onclick="selectTime(this)">15:00</div>
-            <div class="time-slot" onclick="selectTime(this)">15:20</div>
-            <div class="time-slot" onclick="selectTime(this)">18:00</div>
-            <div class="time-slot" onclick="selectTime(this)">18:20</div>
-        </div>
-
-        <div class="form-group">
-            <div class="section-title">Ваше запитання</div>
-            <input type="text" class="form-input" placeholder="Напишіть головне питання..." id="client-question">
-        </div>
-
-        <button class="btn-submit" onclick="submitOrderOnly()">Записатися</button>
-    </div>
-
-    <!-- ИНФОРМАЦИЯ ПО ОПЛАТЕ -->
-    <div id="tab-payment-info" class="tab-content">
-        <div class="header">
-            <h2>Оплата замовлення 💳</h2>
-        </div>
-        <div class="requisites-box">
-            <b>Сума до сплати: <span id="payment-total">0</span> грн</b><br><br>
-            Картка Monobank / ПриватБанк:<br>
-            <b>4441 1111 2222 3333</b><br>
-            Отримувач: Таємниці Долі
-        </div>
-
-        <div class="card-box" style="text-align: center; font-size: 13px; line-height: 1.5; color: var(--text-main);">
-            <b>Як надіслати квитанцію?</b><br>
-            Будь ласка, надішліть скріншот або фото квитанції безпосередньо у наш Telegram-бот у чат з адміністратором, щоб ми могли підтвердити ваш запис.<br><br>
-            <span style="color: var(--text-muted);">Після цього можете перевірити статус у своєму кабінеті.</span>
-        </div>
-
-        <button class="btn-submit" onclick="switchTab('cabinet', document.querySelectorAll('.tab-btn')[1])">Перейти до кабінету</button>
-    </div>
-
-    <!-- ВКЛАДКА 2: КАБИНЕТ -->
-    <div id="tab-cabinet" class="tab-content">
-        <div class="header">
-            <h2>Особистий кабінет 🔮</h2>
-        </div>
-        
-        <div id="auth-container" class="card-box">
-            <div class="auth-switcher">
-                <div class="auth-switch-btn active" id="btn-mode-login" onclick="setAuthMode('login')">Увійти</div>
-                <div class="auth-switch-btn" id="btn-mode-reg" onclick="setAuthMode('register')">Зареєструватися</div>
+        <div id="auth-box" class="card">
+            <div id="login-form">
+                <h2>Вхід у кабінет</h2>
+                <div class="form-group"><label>Email</label><input type="email" id="l-email"></div>
+                <div class="form-group"><label>Пароль</label><input type="password" id="l-pass"></div>
+                <button class="btn" onclick="login()">Увійти</button>
+                <p style="font-size:0.85rem; margin-top:0.8rem;">Немає акаунту? <a href="#" onclick="toggleAuth('reg')">Зареєструватися</a></p>
             </div>
 
-            <div id="form-login-pane">
-                <div class="form-group" style="margin-bottom:8px;">
-                    <input type="email" class="form-input" placeholder="Ваш Email" id="login-email">
-                </div>
-                <div class="form-group" style="margin-bottom:12px;">
-                    <input type="password" class="form-input" placeholder="Пароль" id="login-password">
-                </div>
-                <button class="btn-submit" onclick="performLogin()">Увійти в кабінет</button>
-                <div style="text-align: center; margin-top: 10px;">
-                    <a href="#" onclick="triggerRecovery(); return false;" style="font-size: 12px; color: var(--accent-purple); text-decoration: none;">Забули пароль? Відновити за поштою</a>
-                </div>
+            <div id="reg-form" class="hidden">
+                <h2>Реєстрація</h2>
+                <div class="form-group"><label>ПІБ</label><input type="text" id="r-name"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="r-email"></div>
+                <div class="form-group"><label>Telegram Username (без @)</label><input type="text" id="r-tg"></div>
+                <div class="form-group"><label>Пароль</label><input type="password" id="r-pass"></div>
+                <button class="btn" onclick="register()">Зареєструватися</button>
+                <p style="font-size:0.85rem; margin-top:0.8rem;">Вже є акаунт? <a href="#" onclick="toggleAuth('login')">Увійти</a></p>
             </div>
 
-            <div id="form-reg-pane" style="display:none;">
-                <div class="form-group" style="margin-bottom:8px;">
-                    <input type="text" class="form-input" placeholder="Ваше ім'я" id="reg-name">
-                </div>
-                <div class="form-group" style="margin-bottom:8px;">
-                    <input type="email" class="form-input" placeholder="Ваш Email" id="reg-email">
-                </div>
-                <div class="form-group" style="margin-bottom:12px;">
-                    <input type="password" class="form-input" placeholder="Створіть пароль" id="reg-password">
-                </div>
-                <button class="btn-submit" onclick="performRegister()">Створити кабінет</button>
-            </div>
-
-            <!-- Реальная проверка кода на бэкенде -->
-            <div id="email-verification-pane" style="display:none; text-align: center; padding: 10px 0;">
-                <div style="font-size: 38px; margin-bottom: 10px;">✉️</div>
-                <h3 style="font-size: 15px; color: var(--accent-purple); margin-bottom: 6px;">Підтвердіть вашу пошту</h3>
-                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">
-                    Ми відправили 4-значний код підтвердження на пошту: <br><b id="verify-target-email" style="color: var(--text-main);"></b>
-                </p>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <input type="text" class="form-input" placeholder="Введіть код з пошти (напр. 1234)" id="verification-code-input" style="text-align: center; letter-spacing: 2px; font-weight: 600;">
-                </div>
-                <button class="btn-submit" onclick="verifyEmailCode()">Підтвердити та увійти</button>
-                <button class="btn-secondary btn-submit" style="margin-top: 8px;" onclick="cancelVerification()">Назад до входу</button>
+            <div id="2fa-form" class="hidden">
+                <h2>2FA Верифікація</h2>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.8rem;">Введіть 4-значний код, надісланий на вашу пошту:</p>
+                <div class="form-group"><input type="text" id="2fa-code" maxlength="4"></div>
+                <button class="btn" onclick="verify2FA()">Підтвердити</button>
             </div>
         </div>
 
-        <div id="cabinet-data" style="display:none;">
-            <div class="profile-card">
-                <div class="profile-info">
-                    <h3 id="cab-user-name">Ім'я</h3>
-                    <p id="cab-user-email">email@mail.com</p>
-                </div>
-                <button class="profile-logout-btn" onclick="performLogout()">Вийти</button>
+        <div id="app-box" class="hidden">
+            <div class="card">
+                <h2>Вітаємо, <span id="u-name"></span>!</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Telegram: @<span id="u-tg"></span></p>
+                <button class="btn" style="background:#cbd5e1; color:#334155; margin-top:0.8rem; width:auto; padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="logout()">Вийти</button>
             </div>
 
-            <div id="active-booking-notification" style="display: none;"></div>
+            <div class="card">
+                <h2>Оформити замовлення</h2>
+                <div class="form-group">
+                    <label>Оберіть послуги:</label>
+                    <div class="checkbox-item">
+                        <span><input type="checkbox" name="srv" value="1"> Експрес-консультація</span><strong>500 грн</strong>
+                    </div>
+                    <div class="checkbox-item">
+                        <span><input type="checkbox" name="srv" value="2"> Повний розбір</span><strong>1200 грн</strong>
+                    </div>
+                    <div class="checkbox-item">
+                        <span><input type="checkbox" name="srv" value="3"> Супровід (1 тиждень)</span><strong>3000 грн</strong>
+                    </div>
+                </div>
 
-            <div class="section-title">Історія замовлень</div>
-            <div id="cabinet-orders-list"></div>
-        </div>
-    </div>
+                <div class="form-group"><label>Дата народження</label><input type="date" id="o-date"></div>
+                <div class="form-group"><label>Зручний час для дзвінка</label><input type="text" id="o-time" placeholder="наприклад, Пн-Ср після 16:00"></div>
+                <div class="form-group"><label>Ваше запитання</label><textarea id="o-q" rows="2"></textarea></div>
+                <button class="btn" onclick="createOrder()">Створити замовлення</button>
+            </div>
 
-    <!-- АДМИН-ПАНЕЛЬ -->
-    <div id="tab-admin" class="tab-content">
-        <div class="header">
-            <h2>Адмін-панель ⚙️</h2>
-        </div>
-        <div id="admin-orders-list">
-            <p style="text-align:center; color:var(--text-muted); font-size:13px;">Завантаження замовлень...</p>
+            <div class="card">
+                <h2>Мої замовлення</h2>
+                <div id="orders-list"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        let selectedTimeSlot = '';
-        let currentOrderId = null;
-        let selectedDateStr = '';
-        let pendingVerificationEmail = '';
-        let pendingVerificationName = '';
+        const tg = window.Telegram?.WebApp;
+        if (tg) tg.expand();
 
-        window.addEventListener('load', () => {
-            if(window.location.hash === '#admin') {
-                fetch('/api/admin/check')
-                    .then(res => res.json())
-                    .then(data => {
-                        if(data.is_admin) {
-                            const nav = document.getElementById('client-tabs');
-                            nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
-                            switchTab('admin', document.getElementById('admin-tab-btn'));
-                            loadAdminOrders();
-                        } else {
-                            alert('Доступ заборонено');
-                            window.location.hash = '';
-                        }
-                    }).catch(() => {
-                        const nav = document.getElementById('client-tabs');
-                        nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
-                        switchTab('admin', document.getElementById('admin-tab-btn'));
-                        loadAdminOrders();
-                    });
-            }
-        });
+        let currentUser = JSON.parse(localStorage.getItem('user'));
+        let pendingEmail = '';
 
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            if(el) el.classList.add('active');
+        if (currentUser) showApp();
 
-            if(tabId === 'admin') loadAdminOrders();
+        function toggleAuth(type) {
+            document.getElementById('login-form').classList.toggle('hidden', type === 'reg');
+            document.getElementById('reg-form').classList.toggle('hidden', type !== 'reg');
         }
 
-        function selectTime(el) {
-            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedTimeSlot = el.textContent;
-        }
-
-        function setAuthMode(mode) {
-            if(mode === 'login') {
-                document.getElementById('btn-mode-login').classList.add('active');
-                document.getElementById('btn-mode-reg').classList.remove('active');
-                document.getElementById('form-login-pane').style.display = 'block';
-                document.getElementById('form-reg-pane').style.display = 'none';
-            } else {
-                document.getElementById('btn-mode-reg').classList.add('active');
-                document.getElementById('btn-mode-login').classList.remove('active');
-                document.getElementById('form-reg-pane').style.display = 'block';
-                document.getElementById('form-login-pane').style.display = 'none';
-            }
-        }
-
-        const calendarContainer = document.getElementById('calendar-days');
-        const daysOfWeek = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-        const today = new Date();
-        for (let i = 0; i < 7; i++) {
-            let d = new Date();
-            d.setDate(today.getDate() + i);
-            let dayDiv = document.createElement('div');
-            let dateStr = `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`;
-            dayDiv.className = 'calendar-day' + (i === 0 ? ' selected' : '');
-            if(i === 0) selectedDateStr = dateStr;
-            
-            dayDiv.innerHTML = `${daysOfWeek[d.getDay()]}<br><b>${d.getDate()}</b>`;
-            dayDiv.onclick = function() {
-                document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedDateStr = dateStr;
+        async function register() {
+            const body = {
+                full_name: document.getElementById('r-name').value,
+                email: document.getElementById('r-email').value,
+                telegram_username: document.getElementById('r-tg').value,
+                password: document.getElementById('r-pass').value
             };
-            calendarContainer.appendChild(dayDiv);
+            const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (res.ok) {
+                pendingEmail = body.email;
+                document.getElementById('reg-form').classList.add('hidden');
+                document.getElementById('2fa-form').classList.remove('hidden');
+            } else alert(data.detail);
         }
 
-        function submitOrderOnly() {
-            const name = document.getElementById('client-name').value;
-            const email = document.getElementById('client-email').value;
-            const dob = document.getElementById('client-dob').value;
-            const question = document.getElementById('client-question').value;
-            
-            const checked = document.querySelectorAll('input[name="service"]:checked');
-            if (!name || !email) { alert('Введіть ім\'я та email'); return; }
-            if (checked.length === 0) { alert('Оберіть хоча б одну послугу'); return; }
-            if (!selectedTimeSlot) { alert('Оберіть час розкладу'); return; }
+        async function login() {
+            const email = document.getElementById('l-email').value;
+            const password = document.getElementById('l-pass').value;
+            const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, password}) });
+            const data = await res.json();
+            if (res.status === 202) {
+                pendingEmail = email;
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('2fa-form').classList.remove('hidden');
+            } else if (res.ok) {
+                currentUser = data.user;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                showApp();
+            } else alert(data.detail);
+        }
 
-            let serviceIds = Array.from(checked).map(cb => parseInt(cb.value));
-            let fullSlotTime = `${selectedDateStr} о ${selectedTimeSlot}`;
+        async function verify2FA() {
+            const code = document.getElementById('2fa-code').value;
+            const res = await fetch('/api/verify-2fa', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: pendingEmail, code}) });
+            if (res.ok) {
+                alert('Акаунт підтверджено! Увійдіть.');
+                document.getElementById('2fa-form').classList.add('hidden');
+                document.getElementById('login-form').classList.remove('hidden');
+            } else alert('Невірний код.');
+        }
 
-            fetch('/api/order', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, email, dob, service_ids: serviceIds, question, slot_time: fullSlotTime })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success !== false) {
-                    currentOrderId = data.order_id;
-                    document.getElementById('payment-total').textContent = data.total_price || '250';
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById('tab-payment-info').classList.add('active');
-                } else {
-                    alert(data.error || 'Помилка створення замовлення');
-                }
-            }).catch(() => {
-                document.getElementById('payment-total').textContent = '250';
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById('tab-payment-info').classList.add('active');
+        function showApp() {
+            document.getElementById('auth-box').classList.add('hidden');
+            document.getElementById('app-box').classList.remove('hidden');
+            document.getElementById('u-name').innerText = currentUser.full_name;
+            document.getElementById('u-tg').innerText = currentUser.telegram;
+            loadOrders();
+        }
+
+        async function createOrder() {
+            const sids = Array.from(document.querySelectorAll('input[name="srv"]:checked')).map(c => parseInt(c.value));
+            const body = {
+                email: currentUser.email,
+                service_ids: sids,
+                birth_date: document.getElementById('o-date').value,
+                preferred_time: document.getElementById('o-time').value,
+                question: document.getElementById('o-q').value
+            };
+            const res = await fetch('/api/order', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+            if (res.ok) {
+                alert('Замовлення створено!');
+                loadOrders();
+            } else alert((await res.json()).detail);
+        }
+
+        async function loadOrders() {
+            const res = await fetch(`/api/user/orders?email=${currentUser.email}`);
+            const data = await res.json();
+            const box = document.getElementById('orders-list');
+            box.innerHTML = '';
+            data.forEach(o => {
+                box.innerHTML += `
+                    <div class="order-card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>Замовлення #${o.id}</strong>
+                            <span class="badge">${o.status}</span>
+                        </div>
+                        <p style="font-size:0.85rem; margin:0.4rem 0;">${o.services} — <b>${o.total_price} грн</b></p>
+                        ${o.receipt_sent ? '<small style="color:#166534;">Квитанцію надіслано адміну</small>' : `
+                            <div style="margin-top:0.4rem;">
+                                <input type="file" id="f-${o.id}" style="font-size:0.75rem;">
+                                <button class="btn" style="padding:0.3rem; margin-top:0.3rem; font-size:0.75rem;" onclick="uploadReceipt(${o.id})">Надіслати квитанцію</button>
+                            </div>
+                        `}
+                    </div>
+                `;
             });
         }
 
-        function performLogin() {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            if(!email || !pass) { alert('Заповніть пошту та пароль'); return; }
-
-            fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email, password: pass })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    pendingVerificationEmail = email;
-                    pendingVerificationName = data.user ? data.user.name : 'Користувач';
-                    showVerificationStep(email);
-                } else {
-                    alert('Неправильна пошта або пароль. Ви можете скористатися відновленням за поштою нижче.');
-                }
-            }).catch(() => {
-                pendingVerificationEmail = email;
-                pendingVerificationName = 'Користувач';
-                showVerificationStep(email);
-            });
-        }
-
-        function performRegister() {
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-password').value;
-            if(!name || !email || !pass) { alert('Заповніть усі поля для реєстрації'); return; }
-
-            fetch('/api/register', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, email, password: pass })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success !== false) {
-                    pendingVerificationEmail = email;
-                    pendingVerificationName = name;
-                    showVerificationStep(email);
-                } else {
-                    alert(data.error || 'Помилка реєстрації');
-                }
-            }).catch(() => {
-                pendingVerificationEmail = email;
-                pendingVerificationName = name;
-                showVerificationStep(email);
-            });
-        }
-
-        function showVerificationStep(email) {
-            document.getElementById('form-login-pane').style.display = 'none';
-            document.getElementById('form-reg-pane').style.display = 'none';
-            document.querySelector('.auth-switcher').style.display = 'none';
-            document.getElementById('verify-target-email').textContent = email;
-            document.getElementById('email-verification-verification-pane')?.style; // safe ref
-            document.getElementById('email-verification-pane').style.display = 'block';
-        }
-
-        function cancelVerification() {
-            document.getElementById('email-verification-pane').style.display = 'none';
-            document.querySelector('.auth-switcher').style.display = 'flex';
-            setAuthMode('login');
-        }
-
-        // СТРОГАЯ ПРОВЕРКА КОДА НА СЕРВЕРЕ (теперь рандомные цифры не пройдут)
-        function verifyEmailCode() {
-            const code = document.getElementById('verification-code-input').value;
-            if(!code) { alert('Введіть код з пошти'); return; }
-
-            fetch('/api/verify-code', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: pendingVerificationEmail, code: code })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    showCabinetView({ name: pendingVerificationName, email: pendingVerificationEmail });
-                    loadUserOrders(pendingVerificationEmail);
-                } else {
-                    alert('Неправильний або прострочений код підтвердження. Будь ласка, перевірте пошту.');
-                }
-            }).catch(() => {
-                alert('Помилка сервера перевірки. Перевірте правильність введеного коду.');
-            });
-        }
-
-        function triggerRecovery() {
-            const email = document.getElementById('login-email').value;
-            if(!email) {
-                alert('Будь ласка, введіть ваш email у поле входу, щоб ми знали, куди надіслати інструкцію з відновлення.');
-                return;
+        async function uploadReceipt(orderId) {
+            const file = document.getElementById(`f-${orderId}`).files[0];
+            if (!file) return alert('Оберіть файл');
+            const fd = new FormData();
+            fd.append('order_id', orderId);
+            fd.append('file', file);
+            const res = await fetch('/api/upload-receipt', { method: 'POST', body: fd });
+            if (res.ok) {
+                alert('Квитанцію надіслано!');
+                loadOrders();
             }
-            fetch('/api/recover', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email })
-            }).finally(() => {
-                alert(`Інструкцію для відновлення пароля надіслано на пошту: ${email} ✉️`);
-            });
         }
 
-        function showCabinetView(user) {
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('cabinet-data').style.display = 'block';
-            document.getElementById('cab-user-name').textContent = user.name;
-            document.getElementById('cab-user-email').textContent = user.email;
-        }
-
-        function performLogout() {
-            document.getElementById('cabinet-data').style.display = 'none';
-            document.getElementById('auth-container').style.display = 'block';
-            document.querySelector('.auth-switcher').style.display = 'flex';
-            document.getElementById('email-verification-pane').style.display = 'none';
-            document.getElementById('active-booking-notification').style.display = 'none';
-            setAuthMode('login');
-            document.getElementById('login-email').value = '';
-            document.getElementById('login-password').value = '';
-            document.getElementById('verification-code-input').value = '';
-        }
-
-        function loadUserOrders(email) {
-            fetch(`/api/user/orders?email=${encodeURIComponent(email)}`)
-                .then(res => res.json())
-                .then(orders => {
-                    const list = document.getElementById('cabinet-orders-list');
-                    const alertBox = document.getElementById('active-booking-notification');
-                    
-                    if(!orders || orders.length === 0) {
-                        list.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">У вас поки немає замовлень в історії.</p>';
-                        alertBox.style.display = 'none';
-                        return;
-                    }
-
-                    const activeOrder = orders.find(o => {
-                        const s = (o.status || '').toLowerCase();
-                        return s.includes('обробк') || s.includes('очіку') || s.includes('актив') || s.includes('нове');
-                    });
-
-                    if (activeOrder) {
-                        alertBox.style.display = 'block';
-                        alertBox.innerHTML = `
-                            <div class="active-booking-alert">
-                                <h4>✨ У вас є активна запис!</h4>
-                                <p>Послуга: <b>${activeOrder.service_names}</b><br>
-                                Час: <b>${activeOrder.slot_time}</b><br>
-                                Статус: <span style="color: var(--btn-gold); font-weight: 600;">${activeOrder.status}</span></p>
-                            </div>
-                        `;
-                    } else {
-                        alertBox.style.display = 'none';
-                    }
-
-                    list.innerHTML = '';
-                    orders.forEach(o => {
-                        list.innerHTML += `
-                            <div class="order-card">
-                                <div style="font-weight:600;">${o.service_names}</div>
-                                <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time}</div>
-                                <div style="font-size:12px; color:var(--text-muted)">Сума: ${o.total_price || '250'} грн</div>
-                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600; margin-top:4px;">Статус: ${o.status}</div>
-                            </div>
-                        `;
-                    });
-                }).catch(() => {
-                    document.getElementById('cabinet-orders-list').innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Історія замовлень порожня.</p>';
-                });
-        }
-
-        function loadAdminOrders() {
-            fetch('/api/admin/orders')
-                .then(res => res.json())
-                .then(orders => {
-                    const list = document.getElementById('admin-orders-list');
-                    if(!orders || orders.length === 0) {
-                        list.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Немає активних замовлень.</p>';
-                        return;
-                    }
-                    list.innerHTML = '';
-                    orders.forEach(o => {
-                        list.innerHTML += `
-                            <div class="order-card">
-                                <div style="font-weight:600;">${o.client_name} (${o.client_email})</div>
-                                <div style="font-size:12px; color:var(--text-muted)">Послуги: ${o.service_names}</div>
-                                <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time} | Сума: ${o.total_price} грн</div>
-                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
-                                <div class="order-actions">
-                                    <button class="btn-action btn-complete" onclick="updateOrder(${o.id}, 'complete')">Виконано</button>
-                                    <button class="btn-action btn-msg" onclick="alert('Зв\'язок з клієнтом')">Зв'язок</button>
-                                    <button class="btn-action btn-cancel" onclick="updateOrder(${o.id}, 'cancel')">Скасувати</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }).catch(() => {
-                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Помилка завантаження. Перевірте підключення до бекенду.</p>';
-                });
-        }
-
-        function updateOrder(orderId, action) {
-            fetch(`/api/admin/order/${orderId}`, {
-                method: 'PATCH',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ action })
-            }).then(() => loadAdminOrders());
+        function logout() {
+            localStorage.removeItem('user');
+            location.reload();
         }
     </script>
 </body>
