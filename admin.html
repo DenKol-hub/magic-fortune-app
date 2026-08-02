@@ -10,11 +10,11 @@
             --card-bg: #ffffff;
             --card-shadow: rgba(180, 170, 160, 0.2);
             --btn-gold: #c6a258;
-            --btn-gold-hover: #b59247;
             --text-main: #2b2825;
             --text-muted: #726c65;
             --border-color: #e6dfd3;
             --green-color: #4a7c59;
+            --accent-purple: #4a3366;
         }
 
         body {
@@ -37,55 +37,11 @@
             font-size: 18px;
             font-weight: 600;
             margin: 0 0 6px 0;
-            color: #4a3366;
+            color: var(--accent-purple);
             background: rgba(191, 168, 226, 0.3);
             display: inline-block;
             padding: 6px 16px;
             border-radius: 20px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px;
-            box-shadow: 0 4px 12px var(--card-shadow);
-            text-align: center;
-        }
-
-        .stat-title {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--btn-gold);
-        }
-
-        .section-title {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .orders-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
         }
 
         .order-card {
@@ -94,130 +50,69 @@
             border-radius: 14px;
             padding: 16px;
             box-shadow: 0 4px 12px var(--card-shadow);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-
-        .client-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--text-main);
-        }
-
-        .order-sum {
-            font-weight: 700;
-            color: var(--btn-gold);
-            font-size: 15px;
-        }
-
-        .order-details {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .order-details span {
-            display: block;
-            color: var(--text-main);
+            margin-bottom: 12px;
         }
 
         .order-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            margin-top: 10px;
         }
 
         .btn-action {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             border: none;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-approve {
-            background-color: var(--green-color);
             color: white;
         }
 
-        .btn-cancel {
-            background-color: #d9534f;
-            color: white;
-        }
+        .btn-complete { background-color: var(--green-color); }
+        .btn-msg { background-color: var(--accent-purple); }
+        .btn-cancel { background-color: #d9534f; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>Панель Адміністратора ⚙️</h2>
+        <h2>Адмін-панель ⚙️</h2>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-title">Замовлень сьогодні</div>
-            <div class="stat-value" id="orders-count">3</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-title">Виручка</div>
-            <div class="stat-value" id="total-revenue">650 грн</div>
-        </div>
-    </div>
-
-    <div class="section-title">Нові замовлення</div>
-
-    <div class="orders-list" id="admin-orders-container">
-        <div class="order-card">
-            <div class="order-header">
-                <span class="client-name">Анна (12.05.1995)</span>
-                <span class="order-sum">250 грн</span>
-            </div>
-            <div class="order-details">
-                Послуги: <span>Любов і стосунки, Кар’єра та фінанси</span>
-                Запитання: <span>Чи зміниться ситуація на роботі найближчим часом?</span>
-            </div>
-            <div class="order-actions">
-                <button class="btn-action btn-approve" onclick="completeOrder(this)">Підтвердити / Виконано</button>
-                <button class="btn-action btn-cancel" onclick="cancelOrder(this)">Відхилити</button>
-            </div>
-        </div>
-
-        <div class="order-card">
-            <div class="order-header">
-                <span class="client-name">Максим (03.11.1990)</span>
-                <span class="order-sum">300 грн</span>
-            </div>
-            <div class="order-details">
-                Послуги: <span>Великий прогноз на 3 місяці</span>
-                Запитання: <span>Без питання</span>
-            </div>
-            <div class="order-actions">
-                <button class="btn-action btn-approve" onclick="completeOrder(this)">Підтвердити / Виконано</button>
-                <button class="btn-action btn-cancel" onclick="cancelOrder(this)">Відхилити</button>
-            </div>
-        </div>
+    <div id="admin-orders-list">
+        <!-- Заказы подтягиваются из бэка -->
     </div>
 
     <script>
-        function completeOrder(btn) {
-            const card = btn.closest('.order-card');
-            card.style.opacity = '0.5';
-            btn.textContent = 'Виконано ✓';
-            btn.disabled = true;
-        }
+        fetch('/api/admin/orders')
+            .then(res => res.json())
+            .then(orders => {
+                const list = document.getElementById('admin-orders-list');
+                orders.forEach(o => {
+                    list.innerHTML += `
+                        <div class="order-card">
+                            <div style="font-weight:600;">${o.client_name} (${o.client_email})</div>
+                            <div style="font-size:13px; color:var(--text-muted)">Послуги: ${o.service_names}</div>
+                            <div style="font-size:13px; color:var(--text-muted)">Час: ${o.slot_time} | Сума: ${o.total_price} грн</div>
+                            <div style="font-size:13px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
+                            <div class="order-actions">
+                                <button class="btn-action btn-complete" onclick="updateOrder(${o.id}, 'complete')">Виконано</button>
+                                <button class="btn-action btn-msg" onclick="alert('Відкриття чату/дзвінка через бота')">Зв'язок</button>
+                                <button class="btn-action btn-cancel" onclick="updateOrder(${o.id}, 'cancel')">Скасувати</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
 
-        function cancelOrder(btn) {
-            const card = btn.closest('.order-card');
-            card.remove();
+        function updateOrder(orderId, action) {
+            fetch(`/api/admin/order/${orderId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action })
+            }).then(() => location.reload());
         }
     </script>
 </body>
