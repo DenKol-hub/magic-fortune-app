@@ -138,6 +138,37 @@
             outline: none;
         }
 
+        /* Поле загрузки квитанции */
+        .file-upload-box {
+            position: relative;
+            background-color: var(--bg-color);
+            border: 1px dashed var(--btn-gold);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .file-upload-box input[type="file"] {
+            position: absolute;
+            left: 0; top: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .file-preview-name {
+            font-size: 12px;
+            color: var(--btn-gold);
+            font-weight: 600;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
         .footer-action {
             position: fixed;
             bottom: 0;
@@ -168,7 +199,7 @@
             font-size: 14px;
         }
 
-        /* --- МОДАЛЬНОЕ ОКНО ОПЛАТЫ --- */
+        /* МОДАЛЬНОЕ ОКНО */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -199,13 +230,20 @@
             background: var(--bg-color);
             padding: 12px;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             letter-spacing: 1px;
-            margin: 15px 0;
+            margin: 12px 0 6px 0;
             border: 1px dashed var(--btn-gold);
             color: var(--text-main);
             word-break: break-all;
+            cursor: pointer;
+        }
+
+        .card-hint {
+            font-size: 11px;
+            color: var(--btn-gold);
+            margin-bottom: 14px;
         }
 
         .btn-modal-pay {
@@ -289,24 +327,35 @@
             <label>Ваше запитання (за бажанням)</label>
             <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки або конкретну ситуацію..."></textarea>
         </div>
+
+        <!-- Поле добавления чека непосредственно в форме -->
+        <div class="input-group">
+            <label>Квитанція про оплату *</label>
+            <div class="file-upload-box">
+                <input type="file" id="receipt-file" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                <div class="file-upload-text" id="upload-status">📎 Прикріпити скріншот або PDF квитанції</div>
+                <div class="file-preview-name" id="file-name-preview"></div>
+            </div>
+        </div>
     </div>
 
     <div class="footer-action">
         <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
-        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Підтверджую заказ</button>
+        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Оформити замовлення</button>
     </div>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно реквизитов -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-card">
-            <h3>💳 Оплата замовлення</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
+            <h3>💳 Реквізити для оплати</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
             
-            <div class="card-number-box">
+            <div class="card-number-box" onclick="copyCard()">
                 4441 1110 5176 5877
             </div>
+            <div class="card-hint">Натисніть, щоб скопіювати номер карти</div>
 
-            <button class="btn-modal-pay" onclick="sendOrder()">Я оплатив(а) — Отправить заказ</button>
+            <button class="btn-modal-pay" id="confirm-pay-btn" onclick="sendOrder()">Підтверджую оплату та надсилаю</button>
             <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
         </div>
     </div>
@@ -315,7 +364,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let currentPayload = null;
+        let base64Receipt = null;
+        let receiptFileName = "";
 
         function calculateTotal() {
             const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
@@ -326,10 +376,31 @@
             document.getElementById('total-val').innerText = total;
         }
 
+        // Обработка прикрепленного файла
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Ограничение размера файла (до 7 МБ)
+            if (file.size > 7 * 1024 * 1024) {
+                alert("Файл занадто великий. Будь ласка, завантажте квитанцію размером до 7 МБ.");
+                event.target.value = "";
+                return;
+            }
+
+            receiptFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                base64Receipt = e.target.result; // Храним файл как Base64
+                document.getElementById('upload-status').innerText = "✅ Квитанцію прикріплено:";
+                document.getElementById('file-name-preview').innerText = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function openPaymentModal() {
             const name = document.getElementById('client-name').value.trim();
             const dob = document.getElementById('client-dob').value.trim();
-            const question = document.getElementById('client-question').value.trim();
             const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
             if (selectedCheckboxes.length === 0) {
@@ -342,20 +413,15 @@
                 return;
             }
 
-            let selectedServices = [];
+            if (!base64Receipt) {
+                alert("Будь ласка, прикріпіть квитанцію про оплату!");
+                return;
+            }
+
             let total = 0;
             selectedCheckboxes.forEach(cb => {
-                selectedServices.push(cb.getAttribute('data-name'));
                 total += parseInt(cb.value);
             });
-
-            currentPayload = {
-                client_name: name,
-                client_dob: dob,
-                client_question: question || "Без питання",
-                services: selectedServices,
-                total_amount: total
-            };
 
             document.getElementById('modal-sum').innerText = total;
             document.getElementById('payment-modal').style.display = 'flex';
@@ -365,10 +431,49 @@
             document.getElementById('payment-modal').style.display = 'none';
         }
 
+        function copyCard() {
+            const cardNum = "4441111051765877";
+            navigator.clipboard.writeText(cardNum).then(() => {
+                alert("Номер карти скопійовано!");
+            }).catch(() => {
+                const input = document.createElement("input");
+                input.value = cardNum;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand("copy");
+                document.body.removeChild(input);
+                alert("Номер карти скопійовано!");
+            });
+        }
+
         function sendOrder() {
-            if (currentPayload) {
-                tg.sendData(JSON.stringify(currentPayload));
-            }
+            const confirmBtn = document.getElementById('confirm-pay-btn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "Надсилання...";
+
+            const name = document.getElementById('client-name').value.trim();
+            const dob = document.getElementById('client-dob').value.trim();
+            const question = document.getElementById('client-question').value.trim();
+            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
+
+            let selectedServices = [];
+            let total = 0;
+            selectedCheckboxes.forEach(cb => {
+                selectedServices.push(cb.getAttribute('data-name'));
+                total += parseInt(cb.value);
+            });
+
+            const payload = {
+                client_name: name,
+                client_dob: dob,
+                client_question: question || "Без питання",
+                services: selectedServices,
+                total_amount: total,
+                receipt_base64: base64Receipt,
+                receipt_filename: receiptFileName
+            };
+
+            tg.sendData(JSON.stringify(payload));
         }
     </script>
 </body>
