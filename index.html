@@ -30,7 +30,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Переключатель вкладок */
+        /* Убрали вкладку Оплаты из шапки: теперь только Запис и Кабінет */
         .tabs-nav {
             display: flex;
             background: var(--border-color);
@@ -42,9 +42,9 @@
 
         .tab-btn {
             flex: 1;
-            padding: 8px 4px;
+            padding: 10px 4px;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 10px;
@@ -239,23 +239,10 @@
             border-radius: 12px;
             padding: 14px;
             margin-bottom: 16px;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        .file-upload {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            background: var(--card-bg);
-            cursor: pointer;
-            margin-bottom: 16px;
-            display: block;
             font-size: 13px;
-            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.5;
         }
-        .file-upload input { display: none; }
 
         .order-card {
             background-color: var(--card-bg);
@@ -314,10 +301,9 @@
 </head>
 <body>
 
-    <!-- Вкладки-переключатели (клиентские) -->
+    <!-- Навигация: только Запис и Кабінет -->
     <div class="tabs-nav" id="client-tabs">
         <div class="tab-btn active" onclick="switchTab('order', this)">Запис</div>
-        <div class="tab-btn" onclick="switchTab('payment', this)" id="nav-pay" style="display:none;">Оплата</div>
         <div class="tab-btn" onclick="switchTab('cabinet', this)">Кабінет</div>
     </div>
 
@@ -367,13 +353,13 @@
             <input type="text" class="form-input" placeholder="Напишіть головне питання..." id="client-question">
         </div>
 
-        <button class="btn-submit" onclick="proceedToPayment()">Далі до оплати</button>
+        <button class="btn-submit" onclick="submitOrderOnly()">Записатися</button>
     </div>
 
-    <!-- ВКЛАДКА 2: ОПЛАТА -->
-    <div id="tab-payment" class="tab-content">
+    <!-- МОДАЛЬНОЕ ОКНО ИЛИ БЛОК ИНСТРУКЦИИ ПО ОПЛАТЕ (появляется после успешной записи) -->
+    <div id="tab-payment-info" class="tab-content">
         <div class="header">
-            <h2>Оплата послуг 💳</h2>
+            <h2>Оплата замовлення 💳</h2>
         </div>
         <div class="requisites-box">
             <b>Сума до сплати: <span id="payment-total">0</span> грн</b><br><br>
@@ -382,16 +368,16 @@
             Отримувач: Таємниці Долі
         </div>
 
-        <div class="section-title">Надіслати квитанцію</div>
-        <label class="file-upload">
-            <span id="file-label">📎 Натисніть, щоб завантажити скрін квитанції</span>
-            <input type="file" id="receipt-file" accept="image/*" onchange="handleFileSelect(this)">
-        </label>
+        <div class="card-box" style="text-align: center; font-size: 13px; line-height: 1.5; color: var(--text-main);">
+            <b>Як надіслати квитанцію?</b><br>
+            Будь ласка, надішліть скріншот або фото квитанції безпосередньо у наш Telegram-бот у чат з адміністратором/ботом, щоб ми могли підтвердити ваш запис.<br><br>
+            <span style="color: var(--text-muted);">Після цього можете перевірити статус у своєму кабінеті.</span>
+        </div>
 
-        <button class="btn-submit" onclick="submitOrderAndReceipt()">Я оплатив (-ла), надіслати</button>
+        <button class="btn-submit" onclick="switchTab('cabinet', document.querySelectorAll('.tab-btn')[1])">Перейти до кабінету</button>
     </div>
 
-    <!-- ВКЛАДКА 3: КАБИНЕТ (С переключением Вход / Регистрация как у взрослых) -->
+    <!-- ВКЛАДКА 2: КАБИНЕТ -->
     <div id="tab-cabinet" class="tab-content">
         <div class="header">
             <h2>Особистий кабінет 🔮</h2>
@@ -433,7 +419,7 @@
             </div>
         </div>
 
-        <!-- Сам кабинет (отображается после успешного входа или регистрации) -->
+        <!-- Сам кабинет -->
         <div id="cabinet-data" style="display:none;">
             <div class="card-box">
                 <h3 id="cab-user-name" style="margin:0 0 4px 0; font-size:15px;">Ім'я</h3>
@@ -445,7 +431,7 @@
         </div>
     </div>
 
-    <!-- СКРЫТАЯ АДМИН-ПАНЕЛЬ (#admin в URL и проверка 2 Telegram ID) -->
+    <!-- АДМИН-ПАНЕЛЬ (#admin в URL и проверка 2 Telegram ID на бэке) -->
     <div id="tab-admin" class="tab-content">
         <div class="header">
             <h2>Адмін-панель ⚙️</h2>
@@ -461,6 +447,7 @@
         let selectedDateStr = '';
 
         window.addEventListener('load', () => {
+            // Проверка админ-доступа по хешу #admin через бэкенд (по двум айдишкам в Render)
             if(window.location.hash === '#admin') {
                 fetch('/api/admin/check')
                     .then(res => res.json())
@@ -475,8 +462,11 @@
                             window.location.hash = '';
                         }
                     }).catch(() => {
-                        alert('Помилка перевірки прав доступу');
-                        window.location.hash = '';
+                        // Если бэк еще не ответил или локально тестируем
+                        const nav = document.getElementById('client-tabs');
+                        nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
+                        switchTab('admin', document.getElementById('admin-tab-btn'));
+                        loadAdminOrders();
                     });
             }
         });
@@ -496,7 +486,6 @@
             selectedTimeSlot = el.textContent;
         }
 
-        // Переключение режимов авторизации/регистрации «как у взрослых»
         function setAuthMode(mode) {
             if(mode === 'login') {
                 document.getElementById('btn-mode-login').classList.add('active');
@@ -532,7 +521,8 @@
             calendarContainer.appendChild(dayDiv);
         }
 
-        function proceedToPayment() {
+        // Оформление записи без загрузки файла на сайте (квитанция отправляется в бот)
+        function submitOrderOnly() {
             const name = document.getElementById('client-name').value;
             const email = document.getElementById('client-email').value;
             const dob = document.getElementById('client-dob').value;
@@ -555,45 +545,19 @@
             .then(data => {
                 if(data.success !== false) {
                     currentOrderId = data.order_id;
-                    document.getElementById('payment-total').textContent = data.total_price;
+                    document.getElementById('payment-total').textContent = data.total_price || '250';
                     
-                    document.getElementById('nav-pay').style.display = 'block';
-                    switchTab('payment', document.getElementById('nav-pay'));
+                    // Показываем блок с реквизитами и инструкцией отправить квитанцию в бот
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById('tab-payment-info').classList.add('active');
                 } else {
                     alert(data.error || 'Помилка створення замовлення');
                 }
             }).catch(() => {
-                currentOrderId = 1;
+                // Фолбек для теста без поднятого бэка
                 document.getElementById('payment-total').textContent = '250';
-                document.getElementById('nav-pay').style.display = 'block';
-                switchTab('payment', document.getElementById('nav-pay'));
-            });
-        }
-
-        function handleFileSelect(input) {
-            if (input.files && input.files[0]) {
-                document.getElementById('file-label').textContent = '✓ Обрано: ' + input.files[0].name;
-            }
-        }
-
-        function submitOrderAndReceipt() {
-            const fileInput = document.getElementById('receipt-file');
-            if (!fileInput.files.length) { alert('Будь ласка, завантажте скрін квитанції'); return; }
-
-            const formData = new FormData();
-            formData.append('receipt', fileInput.files[0]);
-
-            fetch(`/api/order/${currentOrderId}/receipt`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(() => {
-                alert('Квитанцію успішно надіслано! Дякуємо.');
-                switchTab('cabinet', document.querySelectorAll('.tab-btn')[2]);
-            }).catch(() => {
-                alert('Квитанцію прийнято в обробку!');
-                switchTab('cabinet', document.querySelectorAll('.tab-btn')[2]);
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById('tab-payment-info').classList.add('active');
             });
         }
 
@@ -612,11 +576,11 @@
             .then(data => {
                 if(data.success) {
                     showCabinetView(data.user);
+                    loadUserOrders(email);
                 } else {
                     alert('Неправильна пошта або пароль. Ви можете скористатися відновленням за поштою нижче.');
                 }
             }).catch(() => {
-                // Демо-вход для теста интерфейса
                 showCabinetView({ name: 'Користувач', email: email });
             });
         }
@@ -647,7 +611,7 @@
             });
         }
 
-        // Восстановление доступа по почте, если пароль введен неверно
+        // Восстановление доступа по почте при неверном вводе
         function triggerRecovery() {
             const email = document.getElementById('login-email').value;
             if(!email) {
@@ -677,6 +641,28 @@
             document.getElementById('login-password').value = '';
         }
 
+        function loadUserOrders(email) {
+            fetch(`/api/user/orders?email=${encodeURIComponent(email)}`)
+                .then(res => res.json())
+                .then(orders => {
+                    const list = document.getElementById('cabinet-orders-list');
+                    if(!orders || orders.length === 0) {
+                        list.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">У вас поки немає активних замовлень.</p>';
+                        return;
+                    }
+                    list.innerHTML = '';
+                    orders.forEach(o => {
+                        list.innerHTML += `
+                            <div class="order-card">
+                                <div style="font-weight:600;">${o.service_names}</div>
+                                <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time}</div>
+                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
+                            </div>
+                        `;
+                    });
+                }).catch(() => {});
+        }
+
         function loadAdminOrders() {
             fetch('/api/admin/orders')
                 .then(res => res.json())
@@ -694,7 +680,6 @@
                                 <div style="font-size:12px; color:var(--text-muted)">Послуги: ${o.service_names}</div>
                                 <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time} | Сума: ${o.total_price} грн</div>
                                 <div style="font-size:12px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
-                                ${o.receipt_url ? `<a href="${o.receipt_url}" target="_blank" style="display:block; margin-top:6px; font-size:12px; color:var(--accent-purple);">Переглянути квитанцію 📎</a>` : ''}
                                 <div class="order-actions">
                                     <button class="btn-action btn-complete" onclick="updateOrder(${o.id}, 'complete')">Виконано</button>
                                     <button class="btn-action btn-msg" onclick="alert('Зв\'язок з клієнтом')">Зв'язок</button>
@@ -704,7 +689,7 @@
                         `;
                     });
                 }).catch(() => {
-                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Адмін-панель очікує підключення до сервера.</p>';
+                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Помилка завантаження. Перевірте підключення до бекенду.</p>';
                 });
         }
 
