@@ -1,278 +1,185 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таємниці Долі</title>
+    <title>Админ Панель</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: #f7f4ee;
             --card-bg: #ffffff;
-            --card-shadow: rgba(180, 170, 160, 0.15);
             --btn-gold: #c6a258;
             --text-main: #2b2825;
             --text-muted: #726c65;
-            --border-color: #eee9e0;     
+            --danger-color: #e74c3c;
+            --border-color: #eee9e0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            padding: 16px;
+            margin: 0; padding: 16px;
             box-sizing: border-box;
         }
 
-        .header { text-align: center; margin-bottom: 24px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header h2 {
-            font-size: 16px; font-weight: 600; margin: 0 0 10px 0;
-            color: #4a3366; background: rgba(191, 168, 226, 0.25);
+            font-size: 18px; margin: 0; color: #4a3366;
+            background: rgba(191, 168, 226, 0.25);
             display: inline-block; padding: 6px 16px; border-radius: 20px;
         }
 
-        .services-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        .service-card {
-            background-color: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 16px; display: flex; align-items: flex-start;
-            gap: 12px; cursor: pointer; box-shadow: 0 4px 12px var(--card-shadow);
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
         }
-        .service-card input[type="checkbox"] { margin-top: 3px; accent-color: var(--btn-gold); width: 18px; height: 18px; }
-        .service-info { flex-grow: 1; }
-        .service-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
-        .service-desc { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
-        .service-price { font-weight: 700; color: var(--btn-gold); font-size: 15px; white-space: nowrap; }
+        .stat-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 12px; text-align: center;
+        }
+        .stat-val { font-size: 18px; font-weight: bold; color: var(--btn-gold); }
+        .stat-lbl { font-size: 11px; color: var(--text-muted); }
 
-        .form-section {
-            background-color: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 16px; margin-bottom: 90px;
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-        .form-section h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: var(--text-muted); }
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-muted); }
-        .input-group input, .input-group textarea {
-            width: 100%; padding: 11px; background-color: var(--bg-color);
-            border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-main);
-            box-sizing: border-box; font-size: 14px; outline: none;
-        }
+        .section-title { font-size: 14px; font-weight: bold; margin: 16px 0 8px 0; text-transform: uppercase; color: var(--text-muted); }
 
-        .footer-action {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background-color: var(--bg-color); border-top: 1px solid var(--border-color);
-            padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+        .order-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 14px; margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .total-price { font-size: 16px; font-weight: 700; }
-        .btn-submit {
-            background-color: var(--btn-gold); color: #ffffff; font-weight: 600;
-            border: none; padding: 12px 22px; border-radius: 10px; cursor: pointer; font-size: 14px;
+        .order-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-bottom: 6px; }
+        .order-info { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px; }
+        
+        .actions { display: flex; gap: 8px; }
+        .btn {
+            flex: 1; border: none; padding: 8px; border-radius: 8px;
+            font-weight: bold; font-size: 12px; cursor: pointer; text-align: center;
         }
+        .btn-reply { background: var(--btn-gold); color: white; }
+        .btn-ban { background: var(--danger-color); color: white; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center;
-            align-items: center; z-index: 1000; padding: 20px;
+        .ban-input-box {
+            display: flex; gap: 8px; margin-bottom: 16px;
         }
-        .modal-card {
-            background: var(--card-bg); border-radius: 16px; padding: 20px;
-            width: 100%; max-width: 360px; text-align: center;
+        .ban-input-box input {
+            flex: 1; padding: 10px; border: 1px solid var(--border-color);
+            border-radius: 8px; outline: none; background: var(--card-bg);
         }
-        .card-number-box {
-            background: var(--bg-color); padding: 12px; border-radius: 10px;
-            font-size: 15px; font-weight: bold; margin: 12px 0 6px 0;
-            border: 1px dashed var(--btn-gold); cursor: pointer;
-        }
-        .btn-modal-pay {
-            background-color: var(--btn-gold); color: white; border: none;
-            width: 100%; padding: 12px; border-radius: 10px; font-weight: bold;
-            cursor: pointer; font-size: 14px; margin-top: 10px; margin-bottom: 8px;
-        }
-        .btn-modal-close { background: transparent; color: var(--text-muted); border: none; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>Вас вітає Корнелія 👩🏻‍💻</h2>
-        <p style="font-size: 13px; color: var(--text-muted);">Оберіть послугу та заповніть дані</p>
+        <h2>👑 Панель Управления</h2>
     </div>
 
-    <div class="services-list">
-        <label class="service-card">
-            <input type="checkbox" value="150" data-name="Любов і стосунки" onchange="calculateTotal()">
-            <div class="service-info">
-                <div class="service-title">❤️ Любов і стосунки</div>
-                <div class="service-desc">Почуття, наміри, перспектива розвитку взаємин</div>
-            </div>
-            <div class="service-price">150 грн</div>
-        </label>
-
-        <label class="service-card">
-            <input type="checkbox" value="100" data-name="Кар’єра та фінанси" onchange="calculateTotal()">
-            <div class="service-info">
-                <div class="service-title">💰 Кар’єра та фінанси</div>
-                <div class="service-desc">Робота, покликання, нові можливості</div>
-            </div>
-            <div class="service-price">100 грн</div>
-        </label>
-
-        <label class="service-card">
-            <input type="checkbox" value="200" data-name="Карма та призначення" onchange="calculateTotal()">
-            <div class="service-info">
-                <div class="service-title">🌙 Карма та призначення</div>
-                <div class="service-desc">Життєві уроки, духовний шлях і призначення душі</div>
-            </div>
-            <div class="service-price">200 грн</div>
-        </label>
-
-        <label class="service-card">
-            <input type="checkbox" value="300" data-name="Великий прогноз на 3 місяці" onchange="calculateTotal()">
-            <div class="service-info">
-                <div class="service-title">✨ Великий прогноз на 3 місяці</div>
-                <div class="service-desc">Детальний прогноз на всі сфери життя</div>
-            </div>
-            <div class="service-price">300 грн</div>
-        </label>
-    </div>
-
-    <div class="form-section">
-        <h3>Дані для розкладу</h3>
-        <div class="input-group">
-            <label>Ваше ім'я *</label>
-            <input type="text" id="client-name" placeholder="Наприклад: Анна">
+    <!-- СТАТИСТИКА -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-val" id="st-revenue">0 грн</div>
+            <div class="stat-lbl">Общий доход</div>
         </div>
-        <div class="input-group">
-            <label>Дата народження *</label>
-            <input type="text" id="client-dob" placeholder="ДД.ММ.ГГГГ">
-        </div>
-        <div class="input-group">
-            <label>Ваше запитання (за бажанням)</label>
-            <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки..."></textarea>
+        <div class="stat-card">
+            <div class="stat-val" id="st-orders">0</div>
+            <div class="stat-lbl">Заказов выполнено</div>
         </div>
     </div>
 
-    <div class="footer-action">
-        <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
-        <button class="btn-submit" onclick="openPaymentModal()">Оформити замовлення</button>
+    <!-- БАН ПО ID -->
+    <div class="section-title">⛔ Управление Банами</div>
+    <div class="ban-input-box">
+        <input type="number" id="ban-id-input" placeholder="Введите Telegram ID">
+        <button class="btn btn-ban" onclick="manualBan('ban')">Забанить</button>
+        <button class="btn btn-reply" onclick="manualBan('unban')">Разбанить</button>
     </div>
 
-    <div class="modal-overlay" id="payment-modal">
-        <div class="modal-card">
-            <h3>💳 Реквізити для оплати</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
-            
-            <div class="card-number-box" onclick="copyCard()">
-                4441 1110 5176 5877
-            </div>
-            <div style="font-size: 11px; color: var(--btn-gold); margin-bottom: 12px;">Натисніть, щоб скопіювати</div>
-
-            <button class="btn-modal-pay" id="confirm-pay-btn" onclick="sendOrder()">Підтвердити замовлення</button>
-            <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
-        </div>
+    <!-- АКТИВНЫЕ ЗАКАЗЫ -->
+    <div class="section-title">📋 Активные заказы</div>
+    <div id="orders-container">
+        <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Загрузка заказов...</p>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com"; 
+        // ⚠️ ВАШ URL БЭКЕНДА
+        const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com";
 
-        function calculateTotal() {
-            const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
-            let total = 0;
-            checkboxes.forEach(cb => total += parseInt(cb.value));
-            document.getElementById('total-val').innerText = total;
-        }
-
-        function openPaymentModal() {
-            const name = document.getElementById('client-name').value.trim();
-            const dob = document.getElementById('client-dob').value.trim();
-            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
-
-            if (selectedCheckboxes.length === 0) {
-                alert("Будь ласка, оберіть хоча б одну послугу.");
-                return;
-            }
-            if (!name || !dob) {
-                alert("Будь ласка, вкажіть ім'я та дату народження.");
-                return;
-            }
-
-            let total = 0;
-            selectedCheckboxes.forEach(cb => total += parseInt(cb.value));
-            document.getElementById('modal-sum').innerText = total;
-            document.getElementById('payment-modal').style.display = 'flex';
-        }
-
-        function closePaymentModal() {
-            document.getElementById('payment-modal').style.display = 'none';
-        }
-
-        function copyCard() {
-            const cardNum = "4441111051765877";
-            navigator.clipboard.writeText(cardNum).then(() => alert("Номер карти скопійовано!"));
-        }
-
-        async function sendOrder() {
-            const btn = document.getElementById('confirm-pay-btn');
-            btn.disabled = true;
-            btn.innerText = "Надсилання...";
-
-            const name = document.getElementById('client-name').value.trim();
-            const dob = document.getElementById('client-dob').value.trim();
-            const question = document.getElementById('client-question').value.trim();
-            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
-
-            let selectedServices = [];
-            let total = 0;
-            selectedCheckboxes.forEach(cb => {
-                selectedServices.push(cb.getAttribute('data-name'));
-                total += parseInt(cb.value);
-            });
-
-            // Получаем данные юзера из Telegram WebApp SDK
-            const user = tg.initDataUnsafe?.user;
-
-            if (!user || !user.id) {
-                alert("Ошибка: не удалось определить ваш Telegram ID. Откройте приложение из Telegram.");
-                btn.disabled = false;
-                btn.innerText = "Підтвердити замовлення";
-                return;
-            }
-
-            const payload = {
-                user_id: user.id,
-                username: user.username ? `@${user.username}` : 'нет юзернейма',
-                client_name: name,
-                client_dob: dob,
-                client_question: question || "Без питання",
-                services: selectedServices,
-                total_amount: total
-            };
-
+        async function loadAdminData() {
             try {
-                // Прямой POST-запрос на ваш сервер
-                const response = await fetch(`${BACKEND_URL}/api/order`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const res = await fetch(`${BACKEND_URL}/api/admin/data`);
+                const data = await res.json();
+
+                // Статистика
+                document.getElementById('st-revenue').innerText = `${data.stats.total_revenue} грн`;
+                document.getElementById('st-orders').innerText = data.stats.total_orders;
+
+                // Заказы
+                const container = document.getElementById('orders-container');
+                container.innerHTML = '';
+
+                if (data.active_orders.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Активных заказов нет 🎉</p>';
+                    return;
+                }
+
+                data.active_orders.forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = 'order-card';
+                    card.innerHTML = `
+                        <div class="order-header">
+                            <span>${order.name} (${order.username})</span>
+                            <span style="color: var(--btn-gold);">${order.total} грн</span>
+                        </div>
+                        <div class="order-info">
+                            <b>ID:</b> ${order.user_id} | <b>Возраст:</b> ${order.age} (ДР: ${order.dob})<br>
+                            <b>Услуги:</b> ${order.services.join(', ')}<br>
+                            <b>Вопрос:</b> <i>${order.question}</i>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-ban" onclick="banUser(${order.user_id})">Забанить</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
                 });
 
-                if (response.ok) {
-                    tg.close(); // Закрываем окно WebApp
-                } else {
-                    alert("Помилка відправки. Спробуйте ще раз.");
-                    btn.disabled = false;
-                    btn.innerText = "Підтвердити замовлення";
-                }
             } catch (err) {
                 console.error(err);
-                alert("Помилка з'єднання з сервером.");
-                btn.disabled = false;
-                btn.innerText = "Підтвердити замовлення";
             }
         }
+
+        async function banUser(userId) {
+            if (!confirm(`Заблокировать пользователя ID: ${userId}?`)) return;
+
+            await fetch(`${BACKEND_URL}/api/admin/ban`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, action: 'ban' })
+            });
+
+            loadAdminData();
+        }
+
+        async function manualBan(action) {
+            const input = document.getElementById('ban-id-input');
+            const uid = input.value.trim();
+            if (!uid) return alert("Введите ID");
+
+            await fetch(`${BACKEND_URL}/api/admin/ban`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: uid, action: action })
+            });
+
+            alert(`Пользователь ${uid} -> ${action}`);
+            input.value = '';
+            loadAdminData();
+        }
+
+        loadAdminData();
+        setInterval(loadAdminData, 10000); // Автообновление каждые 10 сек
     </script>
 </body>
 </html>
