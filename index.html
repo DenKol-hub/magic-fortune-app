@@ -1,24 +1,305 @@
-const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com";
-
-async function sendOrder(orderData) {
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/order`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.status === 'ok') {
-            Telegram.WebApp.close(); // Закрываем WebApp после успешной отправки
-        } else {
-            alert(result.message || "Произошла ошибка при отправке заявки.");
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Салон Гаданий</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #f7f4ee;
+            --card-bg: #ffffff;
+            --btn-gold: #c6a258;
+            --btn-gold-hover: #b08d46;
+            --text-main: #2b2825;
+            --text-muted: #726c65;
+            --accent-purple: #4a3366;
+            --border-color: #eee9e0;
         }
-    } catch (error) {
-        console.error("Ошибка сети:", error);
-        alert("Не удалось связаться с сервером.");
-    }
-}
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin: 0 0 6px 0;
+            color: var(--accent-purple);
+        }
+
+        .header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            background: var(--bg-color);
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-info {
+            font-size: 13px;
+        }
+
+        .service-price {
+            font-weight: bold;
+            color: var(--btn-gold);
+            font-size: 13px;
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .total-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .total-price {
+            color: var(--btn-gold);
+            font-size: 18px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--btn-gold);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:active {
+            background: var(--btn-gold-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>✨ Салон Таро & Гаданий</h1>
+        <p>Заполните анкету и выберите нужный расклад</p>
+    </div>
+
+    <!-- АНКЕТА КЛИЕНТА -->
+    <div class="card">
+        <div class="section-title">👤 Ваши данные</div>
+        
+        <div class="form-group">
+            <label for="client_name">Ваше имя *</label>
+            <input type="text" id="client_name" placeholder="Например: Anna">
+        </div>
+
+        <div class="form-group">
+            <label for="client_dob">Дата рождения (ДД.ММ.ГГГГ) *</label>
+            <input type="text" id="client_dob" placeholder="15.08.1998">
+        </div>
+
+        <div class="form-group">
+            <label for="client_question">Ваш вопрос тарологу *</label>
+            <textarea id="client_question" placeholder="Опишите вашу ситуацию или задайте точный вопрос..."></textarea>
+        </div>
+    </div>
+
+    <!-- ВЫБОР УСЛУГ -->
+    <div class="card">
+        <div class="section-title">🔮 Выберите расклады</div>
+
+        <div class="service-item">
+            <div class="service-info">
+                <input type="checkbox" class="checkbox-custom service-cb" data-name="Расклад на Любовь и Отношения" data-price="350" onchange="calculateTotal()">
+                <span>Расклад на Любовь</span>
+            </div>
+            <div class="service-price">350 грн</div>
+        </div>
+
+        <div class="service-item">
+            <div class="service-info">
+                <input type="checkbox" class="checkbox-custom service-cb" data-name="Расклад на Финансы и Карьеру" data-price="400" onchange="calculateTotal()">
+                <span>Финансы и Карьера</span>
+            </div>
+            <div class="service-price">400 грн</div>
+        </div>
+
+        <div class="service-item">
+            <div class="service-info">
+                <input type="checkbox" class="checkbox-custom service-cb" data-name="Прогноз на Год" data-price="600" onchange="calculateTotal()">
+                <span>Полный прогноз на Год</span>
+            </div>
+            <div class="service-price">600 грн</div>
+        </div>
+
+        <div class="total-box">
+            <span>Итого:</span>
+            <span class="total-price" id="total_amount">0 грн</span>
+        </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitOrder()">Заказать расклад ✨</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // URL БЭКЕНДА НА RENDER:
+        const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com";
+
+        let totalSum = 0;
+
+        function calculateTotal() {
+            const checkboxes = document.querySelectorAll('.service-cb');
+            totalSum = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    totalSum += parseInt(cb.getAttribute('data-price'));
+                }
+            });
+            document.getElementById('total_amount').innerText = `${totalSum} грн`;
+        }
+
+        async function submitOrder() {
+            const name = document.getElementById('client_name').value.trim();
+            const dob = document.getElementById('client_dob').value.trim();
+            const question = document.getElementById('client_question').value.trim();
+
+            if (!name || !dob || !question) {
+                alert("Пожалуйста, заполните все обязательные поля!");
+                return;
+            }
+
+            const selectedServices = [];
+            document.querySelectorAll('.service-cb:checked').forEach(cb => {
+                selectedServices.push(cb.getAttribute('data-name'));
+            });
+
+            if (selectedServices.length === 0) {
+                alert("Выберите хотя бы один расклад!");
+                return;
+            }
+
+            // Получаем Telegram данные пользователя
+            const user = tg.initDataUnsafe?.user || {};
+            const userId = user.id;
+            const username = user.username ? `@${user.username}` : (user.first_name || 'нет юзернейма');
+
+            if (!userId) {
+                alert("Ошибка: Открывайте приложение только внутри Telegram!");
+                return;
+            }
+
+            const orderData = {
+                user_id: userId,
+                client_name: name,
+                username: username,
+                client_dob: dob,
+                client_question: question,
+                services: selectedServices,
+                total_amount: totalSum
+            };
+
+            await sendOrder(orderData);
+        }
+
+        async function sendOrder(orderData) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'ok') {
+                    tg.close(); // Закрываем WebApp
+                } else {
+                    alert(result.message || "Произошла ошибка при отправке заявки.");
+                }
+            } catch (error) {
+                console.error("Ошибка сети:", error);
+                alert("Не удалось связаться с сервером.");
+            }
+        }
+    </script>
+</body>
+</html>
