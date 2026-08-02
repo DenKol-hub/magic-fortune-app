@@ -323,7 +323,7 @@
                 total_amount: total
             };
 
-            // Отправляем легкий JSON и сразу ЗАКРЫВАЕМ окно Telegram WebApp
+            // Отправка легкого JSON и закрытие WebApp
             tg.sendData(JSON.stringify(payload));
             tg.close();
         }
