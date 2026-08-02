@@ -25,159 +25,70 @@
             box-sizing: border-box;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
+        .header { text-align: center; margin-bottom: 24px; }
         .header h2 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-            color: #4a3366;
-            background: rgba(191, 168, 226, 0.25);
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
+            font-size: 16px; font-weight: 600; margin: 0 0 10px 0;
+            color: #4a3366; background: rgba(191, 168, 226, 0.25);
+            display: inline-block; padding: 6px 16px; border-radius: 20px;
         }
 
-        .services-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
+        .services-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
         .service-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px var(--card-shadow);
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 16px; display: flex; align-items: flex-start;
+            gap: 12px; cursor: pointer; box-shadow: 0 4px 12px var(--card-shadow);
         }
-
-        .service-card input[type="checkbox"] {
-            margin-top: 3px;
-            accent-color: var(--btn-gold);
-            width: 18px;
-            height: 18px;
-        }
-
+        .service-card input[type="checkbox"] { margin-top: 3px; accent-color: var(--btn-gold); width: 18px; height: 18px; }
         .service-info { flex-grow: 1; }
         .service-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
         .service-desc { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
         .service-price { font-weight: 700; color: var(--btn-gold); font-size: 15px; white-space: nowrap; }
 
         .form-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 90px;
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 16px; margin-bottom: 90px;
             box-shadow: 0 4px 12px var(--card-shadow);
         }
-
-        .form-section h3 {
-            font-size: 13px;
-            margin: 0 0 12px 0;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-
+        .form-section h3 { font-size: 13px; margin: 0 0 12px 0; text-transform: uppercase; color: var(--text-muted); }
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-size: 12px; margin-bottom: 4px; color: var(--text-muted); }
         .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 11px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-main);
-            box-sizing: border-box;
-            font-size: 14px;
-            outline: none;
+            width: 100%; padding: 11px; background-color: var(--bg-color);
+            border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-main);
+            box-sizing: border-box; font-size: 14px; outline: none;
         }
 
         .footer-action {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background-color: var(--bg-color);
-            border-top: 1px solid var(--border-color);
-            padding: 14px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background-color: var(--bg-color); border-top: 1px solid var(--border-color);
+            padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
         }
-
         .total-price { font-size: 16px; font-weight: 700; }
-
         .btn-submit {
-            background-color: var(--btn-gold);
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            padding: 12px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
+            background-color: var(--btn-gold); color: #ffffff; font-weight: 600;
+            border: none; padding: 12px 22px; border-radius: 10px; cursor: pointer; font-size: 14px;
         }
 
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center;
+            align-items: center; z-index: 1000; padding: 20px;
         }
-
         .modal-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
+            background: var(--card-bg); border-radius: 16px; padding: 20px;
+            width: 100%; max-width: 360px; text-align: center;
         }
-
         .card-number-box {
-            background: var(--bg-color);
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            margin: 12px 0 6px 0;
-            border: 1px dashed var(--btn-gold);
-            cursor: pointer;
+            background: var(--bg-color); padding: 12px; border-radius: 10px;
+            font-size: 15px; font-weight: bold; margin: 12px 0 6px 0;
+            border: 1px dashed var(--btn-gold); cursor: pointer;
         }
-
         .btn-modal-pay {
-            background-color: var(--btn-gold);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-            margin-bottom: 8px;
+            background-color: var(--btn-gold); color: white; border: none;
+            width: 100%; padding: 12px; border-radius: 10px; font-weight: bold;
+            cursor: pointer; font-size: 14px; margin-top: 10px; margin-bottom: 8px;
         }
-
-        .btn-modal-close {
-            background: transparent;
-            color: var(--text-muted);
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-        }
+        .btn-modal-close { background: transparent; color: var(--text-muted); border: none; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -246,7 +157,6 @@
         <button class="btn-submit" onclick="openPaymentModal()">Оформити замовлення</button>
     </div>
 
-    <!-- Модальное окно Реквизитов -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-card">
             <h3>💳 Реквізити для оплати</h3>
@@ -265,6 +175,8 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com"; 
 
         function calculateTotal() {
             const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
@@ -302,7 +214,11 @@
             navigator.clipboard.writeText(cardNum).then(() => alert("Номер карти скопійовано!"));
         }
 
-        function sendOrder() {
+        async function sendOrder() {
+            const btn = document.getElementById('confirm-pay-btn');
+            btn.disabled = true;
+            btn.innerText = "Надсилання...";
+
             const name = document.getElementById('client-name').value.trim();
             const dob = document.getElementById('client-dob').value.trim();
             const question = document.getElementById('client-question').value.trim();
@@ -315,7 +231,19 @@
                 total += parseInt(cb.value);
             });
 
+            // Получаем данные юзера из Telegram WebApp SDK
+            const user = tg.initDataUnsafe?.user;
+
+            if (!user || !user.id) {
+                alert("Ошибка: не удалось определить ваш Telegram ID. Откройте приложение из Telegram.");
+                btn.disabled = false;
+                btn.innerText = "Підтвердити замовлення";
+                return;
+            }
+
             const payload = {
+                user_id: user.id,
+                username: user.username ? `@${user.username}` : 'нет юзернейма',
                 client_name: name,
                 client_dob: dob,
                 client_question: question || "Без питання",
@@ -323,9 +251,27 @@
                 total_amount: total
             };
 
-            // Отправка легкого JSON и закрытие WebApp
-            tg.sendData(JSON.stringify(payload));
-            tg.close();
+            try {
+                // Прямой POST-запрос на ваш сервер
+                const response = await fetch(`${BACKEND_URL}/api/order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    tg.close(); // Закрываем окно WebApp
+                } else {
+                    alert("Помилка відправки. Спробуйте ще раз.");
+                    btn.disabled = false;
+                    btn.innerText = "Підтвердити замовлення";
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Помилка з'єднання з сервером.");
+                btn.disabled = false;
+                btn.innerText = "Підтвердити замовлення";
+            }
         }
     </script>
 </body>
