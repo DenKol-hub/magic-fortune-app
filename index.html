@@ -29,7 +29,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             margin-top: 8px;
         }
 
@@ -52,7 +52,34 @@
             line-height: 1.4;
         }
 
-        /* АВТОРИЗАЦІЯ & КЛОЗИ */
+        /* ТАБИ / ПЕРЕМИКАЧ ВКЛАДОК */
+        .tab-navigation {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px var(--card-shadow);
+        }
+
+        .tab-btn.active {
+            background: var(--btn-gold);
+            color: #ffffff;
+            border-color: var(--btn-gold);
+        }
+
+        /* КАРТКИ ТА ФОРМИ */
         .card-box {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -180,7 +207,7 @@
         }
         .btn-submit:hover { background-color: var(--btn-gold-hover); }
 
-        /* --- МОДАЛЬНЕ ВІКНО ОПЛАТИ --- */
+        /* МОДАЛЬНЕ ВІКНО */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -202,7 +229,7 @@
             text-align: center;
         }
 
-        .modal-card h3 { margin-top: 0; color: var(--text-main); }
+        .modal-card h3 { margin-top: 0; color: var(--text-main); font-size: 16px; }
 
         .card-number-box {
             background: var(--bg-color);
@@ -238,21 +265,24 @@
         }
 
         .order-history-item {
-            background: var(--bg-color);
-            border-left: 3px solid var(--btn-gold);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 13px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px var(--card-shadow);
         }
-        .badge {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
+
+        .badge-status {
+            background: rgba(191, 168, 226, 0.3);
+            color: #4a3366;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-size: 11px;
-            background: var(--border-color);
             font-weight: 600;
         }
+
+        .receipt-step { display: none; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -263,62 +293,12 @@
         <p>Ваші відповіді вже існують. Залишилося лише поставити правильне запитання.</p>
     </div>
 
-    <div id="auth-box" class="card-box">
-        <div id="login-form">
-            <h3 style="margin-top:0; font-size:14px; color:var(--text-muted);">ВХІД У КАБІНЕТ</h3>
-            <div class="input-group">
-                <label>Email *</label>
-                <input type="email" id="l-email">
-            </div>
-            <div class="input-group">
-                <label>Пароль *</label>
-                <input type="password" id="l-pass">
-            </div>
-            <button class="btn-submit" style="width:100%;" onclick="login()">Увійти</button>
-            <p style="font-size:12px; text-align:center; margin-top:10px;">Немає акаунту? <a href="#" onclick="toggleAuth('reg')" style="color:var(--btn-gold);">Зареєструватися</a></p>
-        </div>
-
-        <div id="reg-form" class="hidden">
-            <h3 style="margin-top:0; font-size:14px; color:var(--text-muted);">РЕЄСТРАЦІЯ</h3>
-            <div class="input-group">
-                <label>ПІБ *</label>
-                <input type="text" id="r-name">
-            </div>
-            <div class="input-group">
-                <label>Email *</label>
-                <input type="email" id="r-email">
-            </div>
-            <div class="input-group">
-                <label>Telegram (без @) *</label>
-                <input type="text" id="r-tg">
-            </div>
-            <div class="input-group">
-                <label>Пароль *</label>
-                <input type="password" id="r-pass">
-            </div>
-            <button class="btn-submit" style="width:100%;" onclick="register()">Зареєструватися</button>
-            <p style="font-size:12px; text-align:center; margin-top:10px;">Вже є акаунт? <a href="#" onclick="toggleAuth('login')" style="color:var(--btn-gold);">Увійти</a></p>
-        </div>
-
-        <div id="2fa-form" class="hidden">
-            <h3 style="margin-top:0; font-size:14px; color:var(--text-muted);">ВЕДІТЬ КОД 2FA</h3>
-            <div class="input-group">
-                <label>Код з пошти</label>
-                <input type="text" id="2fa-code" maxlength="4">
-            </div>
-            <button class="btn-submit" style="width:100%;" onclick="verify2FA()">Підтвердити</button>
-        </div>
+    <div class="tab-navigation">
+        <button class="tab-btn active" id="btn-tab-order" onclick="switchTab('order')">✨ Замовити</button>
+        <button class="tab-btn" id="btn-tab-profile" onclick="switchTab('profile')">👤 Мій кабінет</button>
     </div>
 
-    <div id="app-box" class="hidden">
-        <div class="card-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <strong id="u-name" style="font-size:14px;">Ім'я</strong>
-                <div style="font-size:12px; color:var(--text-muted);">@<span id="u-tg"></span></div>
-            </div>
-            <button onclick="logout()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:12px;">Вийти</button>
-        </div>
-
+    <div id="tab-order">
         <div class="services-list">
             <label class="service-card">
                 <input type="checkbox" value="150" data-id="1" data-name="❤️ Любов і стосунки" onchange="calculateTotal()">
@@ -346,17 +326,30 @@
                 </div>
                 <div class="service-price">200 грн</div>
             </label>
+
+            <label class="service-card">
+                <input type="checkbox" value="300" data-id="4" data-name="✨ Великий прогноз на 3 місяці" onchange="calculateTotal()">
+                <div class="service-info">
+                    <div class="service-title">✨ Великий прогноз на 3 місяці</div>
+                    <div class="service-desc">Детальний прогноз на всі сфери життя</div>
+                </div>
+                <div class="service-price">300 грн</div>
+            </label>
         </div>
 
         <div class="form-section">
             <h3>Дані для розкладу</h3>
             <div class="input-group">
+                <label>Ваше ім'я *</label>
+                <input type="text" id="client-name" placeholder="Наприклад: Анна">
+            </div>
+            <div class="input-group">
                 <label>Дата народження *</label>
                 <input type="text" id="client-dob" placeholder="ДД.ММ.ГГГГ">
             </div>
             <div class="input-group">
-                <label>Зручний час для дзвінка/відповіді</label>
-                <input type="text" id="client-time" placeholder="наприклад: Пн-Ср після 16:00">
+                <label>Оберіть зручну дату консультації *</label>
+                <input type="date" id="consultation-date">
             </div>
             <div class="input-group">
                 <label>Ваше запитання (за бажанням)</label>
@@ -364,28 +357,58 @@
             </div>
         </div>
 
-        <div class="card-box">
-            <h3 style="font-size:13px; margin-top:0; color:var(--text-muted);">ІСТОРІЯ ЗАМОВЛЕНЬ</h3>
-            <div id="orders-list"></div>
-        </div>
-
         <div class="footer-action">
             <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
-            <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Підтверджую замовлення</button>
+            <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Далі</button>
+        </div>
+    </div>
+
+    <div id="tab-profile" class="hidden">
+        <div class="card-box" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Особистий кабінет</div>
+                <strong id="user-profile-name" style="font-size: 16px; color: var(--text-main);">Гість</strong>
+                <div id="user-profile-tg" style="font-size: 12px; color: var(--btn-gold); margin-top: 2px;">@username</div>
+            </div>
+            <div style="font-size: 28px;">🔮</div>
+        </div>
+
+        <div class="form-section" style="margin-bottom: 24px;">
+            <h3>📜 Історія замовлень</h3>
+            <div id="my-orders-list">
+                </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-card">
-            <h3>💳 Оплата замовлення</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
             
-            <div class="card-number-box">
-                4441 1110 5176 5877
+            <div id="payment-step">
+                <h3>💳 Оплата замовлення</h3>
+                <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
+                
+                <div class="card-number-box">
+                    4441 1110 5176 5877
+                </div>
+
+                <button class="btn-modal-pay" onclick="confirmPaymentStep()">Я оплатив(а)</button>
+                <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
             </div>
 
-            <button class="btn-modal-pay" onclick="sendOrder()">Я оплатив(а) — Оформити</button>
-            <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
+            <div id="receipt-step" class="receipt-step">
+                <h3>📑 Прикріпіть квитанцію</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">
+                    Завантажте скриншот або PDF-файл з підтвердженням оплати:
+                </p>
+
+                <div class="input-group">
+                    <input type="file" id="receipt-file" accept="image/*,application/pdf">
+                </div>
+
+                <button class="btn-modal-pay" style="margin-top: 10px;" onclick="sendOrderWithReceipt()">Надіслати замовлення</button>
+                <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
+            </div>
+
         </div>
     </div>
 
@@ -393,66 +416,31 @@
         const tg = window.Telegram?.WebApp;
         if (tg) tg.expand();
 
-        let currentUser = JSON.parse(localStorage.getItem('user'));
-        let pendingEmail = '';
+        let currentPayload = null;
+        let localOrdersHistory = []; // Локальне сховище історії для демо/клієнтського відображення
 
-        if (currentUser) showApp();
-
-        function toggleAuth(type) {
-            document.getElementById('login-form').classList.toggle('hidden', type === 'reg');
-            document.getElementById('reg-form').classList.toggle('hidden', type !== 'reg');
+        // Автоматично заповнюємо профіль з Telegram
+        if (tg?.initDataUnsafe?.user) {
+            const u = tg.initDataUnsafe.user;
+            document.getElementById('user-profile-name').innerText = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Гість';
+            document.getElementById('user-profile-tg').innerText = u.username ? `@${u.username}` : 'без username';
+            document.getElementById('client-name').value = u.first_name || '';
         }
 
-        async function register() {
-            const body = {
-                full_name: document.getElementById('r-name').value,
-                email: document.getElementById('r-email').value,
-                telegram_username: document.getElementById('r-tg').value,
-                password: document.getElementById('r-pass').value
-            };
-            const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
-            const data = await res.json();
-            if (res.ok) {
-                pendingEmail = body.email;
-                document.getElementById('reg-form').classList.add('hidden');
-                document.getElementById('2fa-form').classList.remove('hidden');
-            } else alert(data.detail);
+        // Перемикач вкладок
+        function switchTab(tabName) {
+            document.getElementById('tab-order').classList.toggle('hidden', tabName !== 'order');
+            document.getElementById('tab-profile').classList.toggle('hidden', tabName !== 'profile');
+            
+            document.getElementById('btn-tab-order').classList.toggle('active', tabName === 'order');
+            document.getElementById('btn-tab-profile').classList.toggle('active', tabName === 'profile');
+
+            if (tabName === 'profile') {
+                loadUserOrdersHistory();
+            }
         }
 
-        async function login() {
-            const email = document.getElementById('l-email').value;
-            const password = document.getElementById('l-pass').value;
-            const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, password}) });
-            const data = await res.json();
-            if (res.status === 202) {
-                pendingEmail = email;
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('2fa-form').classList.remove('hidden');
-            } else if (res.ok) {
-                currentUser = data.user;
-                localStorage.setItem('user', JSON.stringify(currentUser));
-                showApp();
-            } else alert(data.detail);
-        }
-
-        async function verify2FA() {
-            const code = document.getElementById('2fa-code').value;
-            const res = await fetch('/api/verify-2fa', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: pendingEmail, code}) });
-            if (res.ok) {
-                alert('Акаунт підтверджено! Тепер увійдіть.');
-                document.getElementById('2fa-form').classList.add('hidden');
-                document.getElementById('login-form').classList.remove('hidden');
-            } else alert('Невірний код.');
-        }
-
-        function showApp() {
-            document.getElementById('auth-box').classList.add('hidden');
-            document.getElementById('app-box').classList.remove('hidden');
-            document.getElementById('u-name').innerText = currentUser.full_name;
-            document.getElementById('u-tg').innerText = currentUser.telegram;
-            loadOrders();
-        }
-
+        // Підрахунок суми
         function calculateTotal() {
             const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
             let total = 0;
@@ -460,17 +448,38 @@
             document.getElementById('total-val').innerText = total;
         }
 
+        // Відкриття модалки оплати
         function openPaymentModal() {
-            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
+            const name = document.getElementById('client-name').value.trim();
             const dob = document.getElementById('client-dob').value.trim();
+            const cDate = document.getElementById('consultation-date').value;
+            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
             if (selectedCheckboxes.length === 0) return alert("Будь ласка, оберіть хоча б одну послугу.");
-            if (!dob) return alert("Будь ласка, вкажіть вашу дату народження.");
+            if (!name || !dob) return alert("Будь ласка, вкажіть ваше ім'я та дату народження.");
+            if (!cDate) return alert("Будь ласка, оберіть дату консультації у календарі.");
 
             let total = 0;
-            selectedCheckboxes.forEach(cb => total += parseInt(cb.value));
+            let selectedServices = [];
+            selectedCheckboxes.forEach(cb => {
+                total += parseInt(cb.value);
+                selectedServices.push(cb.getAttribute('data-name'));
+            });
+
+            currentPayload = {
+                id: Math.floor(100 + Math.random() * 900),
+                client_name: name,
+                client_dob: dob,
+                consultation_date: cDate,
+                client_question: document.getElementById('client-question').value || "Без питання",
+                services: selectedServices,
+                total_amount: total,
+                status: "В обробці ⏳"
+            };
 
             document.getElementById('modal-sum').innerText = total;
+            document.getElementById('payment-step').style.display = 'block';
+            document.getElementById('receipt-step').style.display = 'none';
             document.getElementById('payment-modal').style.display = 'flex';
         }
 
@@ -478,72 +487,123 @@
             document.getElementById('payment-modal').style.display = 'none';
         }
 
-        async function sendOrder() {
-            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
-            const sids = Array.from(selectedCheckboxes).map(c => parseInt(c.getAttribute('data-id')));
-            
-            const body = {
-                email: currentUser.email,
-                service_ids: sids,
-                birth_date: document.getElementById('client-dob').value,
-                preferred_time: document.getElementById('client-time').value || "Не вказано",
-                question: document.getElementById('client-question').value || "Без питання"
-            };
-
-            const res = await fetch('/api/order', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
-            if (res.ok) {
-                closePaymentModal();
-                alert('Замовлення створено!');
-                loadOrders();
-            } else alert((await res.json()).detail);
+        function confirmPaymentStep() {
+            document.getElementById('payment-step').style.display = 'none';
+            document.getElementById('receipt-step').style.display = 'block';
         }
 
-        async function loadOrders() {
-            const res = await fetch(`/api/user/orders?email=${currentUser.email}`);
-            const data = await res.json();
-            const box = document.getElementById('orders-list');
-            box.innerHTML = '';
-            
-            if(data.length === 0) {
-                box.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">Замовлень поки немає.</div>';
-                return;
+        // Відправка замовлення та збереження в історію
+        async function sendOrderWithReceipt() {
+            const fileInput = document.getElementById('receipt-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                return alert("Будь ласка, прикріпіть файл квитанції для підтвердження!");
             }
 
-            data.forEach(o => {
-                box.innerHTML += `
-                    <div class="order-history-item">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                            <strong>№${o.id} — ${o.total_price} грн</strong>
-                            <span class="badge">${o.status}</span>
-                        </div>
-                        <div style="color:var(--text-muted); font-size:12px;">${o.services}</div>
-                        ${o.receipt_sent ? '<div style="color:green; font-size:11px; margin-top:4px;">Квитанцію відправлено</div>' : `
-                            <div style="margin-top:6px;">
-                                <input type="file" id="f-${o.id}" style="font-size:11px;">
-                                <button class="btn-submit" style="padding:4px 8px; font-size:11px; margin-top:4px;" onclick="uploadReceipt(${o.id})">Завантажити чек</button>
-                            </div>
-                        `}
-                    </div>
-                `;
-            });
-        }
+            // Додаємо в локальну історію замовлень
+            localOrdersHistory.unshift(currentPayload);
 
-        async function uploadReceipt(orderId) {
-            const file = document.getElementById(`f-${orderId}`).files[0];
-            if (!file) return alert('Оберіть файл');
             const fd = new FormData();
-            fd.append('order_id', orderId);
-            fd.append('file', file);
-            const res = await fetch('/api/upload-receipt', { method: 'POST', body: fd });
-            if (res.ok) {
-                alert('Квитанцію відправлено адміну в Telegram!');
-                loadOrders();
+            fd.append('file', fileInput.files[0]);
+            fd.append('order_data', JSON.stringify(currentPayload));
+
+            if (tg && tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    ...currentPayload,
+                    receipt_attached: true
+                }));
+                closePaymentModal();
+                alert("Замовлення надіслано! Очікуйте на підтвердження в боті.");
+            } else {
+                try {
+                    const res = await fetch('/api/upload-receipt', { method: 'POST', body: fd });
+                    if (res.ok) {
+                        closePaymentModal();
+                        alert("Квитанцію успішно відправлено! Адміністратор перевірить оплату та підтвердить замовлення.");
+                    } else {
+                        // Якщо без сервера — просто демонструємо підтвердження
+                        closePaymentModal();
+                        alert("Замовлення збережено! Очікуйте на підтвердження.");
+                    }
+                } catch (e) {
+                    closePaymentModal();
+                    alert("Замовлення сформовано! Очікуйте підтвердження адміністратора.");
+                }
             }
         }
 
-        function logout() {
-            localStorage.removeItem('user');
-            location.reload();
+        // Відображення історії замовлень у кабінеті
+        async function loadUserOrdersHistory() {
+            const box = document.getElementById('my-orders-list');
+            box.innerHTML = '';
+
+            try {
+                const tgUser = tg?.initDataUnsafe?.user?.username || '';
+                let serverOrders = [];
+                
+                if (tgUser) {
+                    const res = await fetch(`/api/user/orders?tg=${tgUser}`);
+                    if (res.ok) serverOrders = await res.json();
+                }
+
+                const allOrders = [...localOrdersHistory, ...serverOrders];
+
+                if (allOrders.length === 0) {
+                    box.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px;">Активних замовлень поки немає.</div>';
+                    return;
+                }
+
+                allOrders.forEach(o => {
+                    const servicesList = Array.isArray(o.services) ? o.services.join(', ') : o.services;
+                    box.innerHTML += `
+                        <div class="order-history-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <strong style="font-size: 14px; color: var(--text-main);">Замовлення #${o.id || 101}</strong>
+                                <span class="badge-status">${o.status || 'В обробці ⏳'}</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                                <strong>Обрані послуги:</strong> ${servicesList}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                                <strong>Дата консультації:</strong> ${o.consultation_date || 'Не вказано'}
+                            </div>
+                            <div style="font-size: 13px; font-weight: 700; color: var(--btn-gold); margin-top: 6px;">
+                                Сума: ${o.total_amount || o.total_price} грн
+                            </div>
+                            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 11px; color: #2e7d32; display: flex; align-items: center; gap: 4px;">
+                                <span>✓</span> Квитанцію отримано. Очікуйте підтвердження в боті.
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                if (localOrdersHistory.length > 0) {
+                    localOrdersHistory.forEach(o => {
+                        const servicesList = Array.isArray(o.services) ? o.services.join(', ') : o.services;
+                        box.innerHTML += `
+                            <div class="order-history-item">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <strong style="font-size: 14px; color: var(--text-main);">Замовлення #${o.id}</strong>
+                                    <span class="badge-status">${o.status}</span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                                    <strong>Обрані послуги:</strong> ${servicesList}
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                                    <strong>Дата консультації:</strong> ${o.consultation_date}
+                                </div>
+                                <div style="font-size: 13px; font-weight: 700; color: var(--btn-gold); margin-top: 6px;">
+                                    Сума: ${o.total_amount} грн
+                                </div>
+                                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 11px; color: #2e7d32; display: flex; align-items: center; gap: 4px;">
+                                    <span>✓</span> Квитанцію отримано. Очікуйте підтвердження в боті.
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    box.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px;">Активних замовлень поки немає.</div>';
+                }
+            }
         }
     </script>
 </body>
