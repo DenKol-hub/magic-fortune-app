@@ -138,37 +138,6 @@
             outline: none;
         }
 
-        /* Поле загрузки квитанции */
-        .file-upload-box {
-            position: relative;
-            background-color: var(--bg-color);
-            border: 1px dashed var(--btn-gold);
-            border-radius: 10px;
-            padding: 14px;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .file-upload-box input[type="file"] {
-            position: absolute;
-            left: 0; top: 0; width: 100%; height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-upload-text {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .file-preview-name {
-            font-size: 12px;
-            color: var(--btn-gold);
-            font-weight: 600;
-            margin-top: 4px;
-            word-break: break-all;
-        }
-
         .footer-action {
             position: fixed;
             bottom: 0;
@@ -199,7 +168,7 @@
             font-size: 14px;
         }
 
-        /* МОДАЛЬНОЕ ОКНО */
+        /* --- МОДАЛЬНОЕ ОКНО --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -244,6 +213,38 @@
             font-size: 11px;
             color: var(--btn-gold);
             margin-bottom: 14px;
+        }
+
+        /* Блок загрузки файла внутри модалки */
+        .file-upload-box {
+            position: relative;
+            background-color: var(--bg-color);
+            border: 1px dashed var(--btn-gold);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 14px;
+        }
+
+        .file-upload-box input[type="file"] {
+            position: absolute;
+            left: 0; top: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .file-preview-name {
+            font-size: 11px;
+            color: var(--btn-gold);
+            font-weight: 600;
+            margin-top: 4px;
+            word-break: break-all;
         }
 
         .btn-modal-pay {
@@ -327,24 +328,14 @@
             <label>Ваше запитання (за бажанням)</label>
             <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки або конкретну ситуацію..."></textarea>
         </div>
-
-        <!-- Поле добавления чека непосредственно в форме -->
-        <div class="input-group">
-            <label>Квитанція про оплату *</label>
-            <div class="file-upload-box">
-                <input type="file" id="receipt-file" accept="image/*,.pdf" onchange="handleFileSelect(event)">
-                <div class="file-upload-text" id="upload-status">📎 Прикріпити скріншот або PDF квитанції</div>
-                <div class="file-preview-name" id="file-name-preview"></div>
-            </div>
-        </div>
     </div>
 
     <div class="footer-action">
         <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
-        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Оформити замовлення</button>
+        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Перейти до оплати</button>
     </div>
 
-    <!-- Модальное окно реквизитов -->
+    <!-- Модальное окно Реквизитов и Загрузки чека -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-card">
             <h3>💳 Реквізити для оплати</h3>
@@ -354,6 +345,13 @@
                 4441 1110 5176 5877
             </div>
             <div class="card-hint">Натисніть, щоб скопіювати номер карти</div>
+
+            <!-- Блок для прикрепления квитанции прямо тут -->
+            <div class="file-upload-box">
+                <input type="file" id="receipt-file" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                <div class="file-upload-text" id="upload-status">📎 Прикріпити чек / квитанцію *</div>
+                <div class="file-preview-name" id="file-name-preview"></div>
+            </div>
 
             <button class="btn-modal-pay" id="confirm-pay-btn" onclick="sendOrder()">Підтверджую оплату та надсилаю</button>
             <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
@@ -376,14 +374,12 @@
             document.getElementById('total-val').innerText = total;
         }
 
-        // Обработка прикрепленного файла
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Ограничение размера файла (до 7 МБ)
             if (file.size > 7 * 1024 * 1024) {
-                alert("Файл занадто великий. Будь ласка, завантажте квитанцію размером до 7 МБ.");
+                alert("Файл занадто великий. Завантажте квитанцію розміром до 7 МБ.");
                 event.target.value = "";
                 return;
             }
@@ -391,7 +387,7 @@
             receiptFileName = file.name;
             const reader = new FileReader();
             reader.onload = function(e) {
-                base64Receipt = e.target.result; // Храним файл как Base64
+                base64Receipt = e.target.result;
                 document.getElementById('upload-status').innerText = "✅ Квитанцію прикріплено:";
                 document.getElementById('file-name-preview').innerText = file.name;
             };
@@ -410,11 +406,6 @@
 
             if (!name || !dob) {
                 alert("Будь ласка, вкажіть ваше ім'я та дату народження.");
-                return;
-            }
-
-            if (!base64Receipt) {
-                alert("Будь ласка, прикріпіть квитанцію про оплату!");
                 return;
             }
 
@@ -447,6 +438,11 @@
         }
 
         function sendOrder() {
+            if (!base64Receipt) {
+                alert("Будь ласка, прикріпіть квитанцію про оплату!");
+                return;
+            }
+
             const confirmBtn = document.getElementById('confirm-pay-btn');
             confirmBtn.disabled = true;
             confirmBtn.innerText = "Надсилання...";
