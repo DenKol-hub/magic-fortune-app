@@ -163,7 +163,7 @@
             color: var(--text-muted);
         }
 
-        .input-group input, .input-group textarea {
+        .input-group input, .input-group textarea, .input-group select {
             width: 100%;
             padding: 11px;
             background-color: var(--bg-color);
@@ -174,6 +174,12 @@
             font-size: 14px;
             outline: none;
         }
+
+        .datetime-row {
+            display: flex;
+            gap: 10px;
+        }
+        .datetime-row .input-group { flex: 1; }
 
         .footer-action {
             position: fixed;
@@ -347,10 +353,38 @@
                 <label>Дата народження *</label>
                 <input type="text" id="client-dob" placeholder="ДД.ММ.ГГГГ">
             </div>
-            <div class="input-group">
-                <label>Оберіть зручну дату консультації *</label>
-                <input type="date" id="consultation-date">
+
+            <div class="datetime-row">
+                <div class="input-group">
+                    <label>Оберіть дату *</label>
+                    <input type="date" id="consultation-date">
+                </div>
+                <div class="input-group">
+                    <label>Зручний час (30 хв) *</label>
+                    <select id="consultation-time">
+                        <option value="">Оберіть...</option>
+                        <option value="10:00 - 10:30">10:00 - 10:30</option>
+                        <option value="10:30 - 11:00">10:30 - 11:00</option>
+                        <option value="11:00 - 11:30">11:00 - 11:30</option>
+                        <option value="11:30 - 12:00">11:30 - 12:00</option>
+                        <option value="12:00 - 12:30">12:00 - 12:30</option>
+                        <option value="12:30 - 13:00">12:30 - 13:00</option>
+                        <option value="14:00 - 14:30">14:00 - 14:30</option>
+                        <option value="14:30 - 15:00">14:30 - 15:00</option>
+                        <option value="15:00 - 15:30">15:00 - 15:30</option>
+                        <option value="15:30 - 16:00">15:30 - 16:00</option>
+                        <option value="16:00 - 16:30">16:00 - 16:30</option>
+                        <option value="16:30 - 17:00">16:30 - 17:00</option>
+                        <option value="17:00 - 17:30">17:00 - 17:30</option>
+                        <option value="17:30 - 18:00">17:30 - 18:00</option>
+                        <option value="18:00 - 18:30">18:00 - 18:30</option>
+                        <option value="18:30 - 19:00">18:30 - 19:00</option>
+                        <option value="19:00 - 19:30">19:00 - 19:30</option>
+                        <option value="19:30 - 20:00">19:30 - 20:00</option>
+                    </select>
+                </div>
             </div>
+
             <div class="input-group">
                 <label>Ваше запитання (за бажанням)</label>
                 <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки або конкретну ситуацію..."></textarea>
@@ -391,7 +425,7 @@
                     4441 1110 5176 5877
                 </div>
 
-                <button class="btn-modal-pay" onclick="confirmPaymentStep()">Я оплатив(а)</button>
+                <button class="btn-modal-pay" onclick="confirmPaymentStep()">Я сплатив(ла)</button>
                 <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
             </div>
 
@@ -417,9 +451,8 @@
         if (tg) tg.expand();
 
         let currentPayload = null;
-        let localOrdersHistory = []; // Локальне сховище історії для демо/клієнтського відображення
+        let localOrdersHistory = [];
 
-        // Автоматично заповнюємо профіль з Telegram
         if (tg?.initDataUnsafe?.user) {
             const u = tg.initDataUnsafe.user;
             document.getElementById('user-profile-name').innerText = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Гість';
@@ -427,7 +460,6 @@
             document.getElementById('client-name').value = u.first_name || '';
         }
 
-        // Перемикач вкладок
         function switchTab(tabName) {
             document.getElementById('tab-order').classList.toggle('hidden', tabName !== 'order');
             document.getElementById('tab-profile').classList.toggle('hidden', tabName !== 'profile');
@@ -440,7 +472,6 @@
             }
         }
 
-        // Підрахунок суми
         function calculateTotal() {
             const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
             let total = 0;
@@ -448,16 +479,17 @@
             document.getElementById('total-val').innerText = total;
         }
 
-        // Відкриття модалки оплати
         function openPaymentModal() {
             const name = document.getElementById('client-name').value.trim();
             const dob = document.getElementById('client-dob').value.trim();
             const cDate = document.getElementById('consultation-date').value;
+            const cTime = document.getElementById('consultation-time').value;
             const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
             if (selectedCheckboxes.length === 0) return alert("Будь ласка, оберіть хоча б одну послугу.");
             if (!name || !dob) return alert("Будь ласка, вкажіть ваше ім'я та дату народження.");
-            if (!cDate) return alert("Будь ласка, оберіть дату консультації у календарі.");
+            if (!cDate) return alert("Будь ласка, оберіть дату консультації.");
+            if (!cTime) return alert("Будь ласка, оберіть 30-хвилинний слот часу!");
 
             let total = 0;
             let selectedServices = [];
@@ -470,7 +502,7 @@
                 id: Math.floor(100 + Math.random() * 900),
                 client_name: name,
                 client_dob: dob,
-                consultation_date: cDate,
+                consultation_date: `${cDate} (${cTime})`,
                 client_question: document.getElementById('client-question').value || "Без питання",
                 services: selectedServices,
                 total_amount: total,
@@ -492,14 +524,12 @@
             document.getElementById('receipt-step').style.display = 'block';
         }
 
-        // Відправка замовлення та збереження в історію
         async function sendOrderWithReceipt() {
             const fileInput = document.getElementById('receipt-file');
             if (!fileInput.files || fileInput.files.length === 0) {
                 return alert("Будь ласка, прикріпіть файл квитанції для підтвердження!");
             }
 
-            // Додаємо в локальну історію замовлень
             localOrdersHistory.unshift(currentPayload);
 
             const fd = new FormData();
@@ -514,96 +544,43 @@
                 closePaymentModal();
                 alert("Замовлення надіслано! Очікуйте на підтвердження в боті.");
             } else {
-                try {
-                    const res = await fetch('/api/upload-receipt', { method: 'POST', body: fd });
-                    if (res.ok) {
-                        closePaymentModal();
-                        alert("Квитанцію успішно відправлено! Адміністратор перевірить оплату та підтвердить замовлення.");
-                    } else {
-                        // Якщо без сервера — просто демонструємо підтвердження
-                        closePaymentModal();
-                        alert("Замовлення збережено! Очікуйте на підтвердження.");
-                    }
-                } catch (e) {
-                    closePaymentModal();
-                    alert("Замовлення сформовано! Очікуйте підтвердження адміністратора.");
-                }
+                closePaymentModal();
+                alert("Замовлення сформовано! Очікуйте підтвердження в боті.");
             }
         }
 
-        // Відображення історії замовлень у кабінеті
         async function loadUserOrdersHistory() {
             const box = document.getElementById('my-orders-list');
             box.innerHTML = '';
 
-            try {
-                const tgUser = tg?.initDataUnsafe?.user?.username || '';
-                let serverOrders = [];
-                
-                if (tgUser) {
-                    const res = await fetch(`/api/user/orders?tg=${tgUser}`);
-                    if (res.ok) serverOrders = await res.json();
-                }
-
-                const allOrders = [...localOrdersHistory, ...serverOrders];
-
-                if (allOrders.length === 0) {
-                    box.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px;">Активних замовлень поки немає.</div>';
-                    return;
-                }
-
-                allOrders.forEach(o => {
-                    const servicesList = Array.isArray(o.services) ? o.services.join(', ') : o.services;
-                    box.innerHTML += `
-                        <div class="order-history-item">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <strong style="font-size: 14px; color: var(--text-main);">Замовлення #${o.id || 101}</strong>
-                                <span class="badge-status">${o.status || 'В обробці ⏳'}</span>
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
-                                <strong>Обрані послуги:</strong> ${servicesList}
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
-                                <strong>Дата консультації:</strong> ${o.consultation_date || 'Не вказано'}
-                            </div>
-                            <div style="font-size: 13px; font-weight: 700; color: var(--btn-gold); margin-top: 6px;">
-                                Сума: ${o.total_amount || o.total_price} грн
-                            </div>
-                            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 11px; color: #2e7d32; display: flex; align-items: center; gap: 4px;">
-                                <span>✓</span> Квитанцію отримано. Очікуйте підтвердження в боті.
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch (e) {
-                if (localOrdersHistory.length > 0) {
-                    localOrdersHistory.forEach(o => {
-                        const servicesList = Array.isArray(o.services) ? o.services.join(', ') : o.services;
-                        box.innerHTML += `
-                            <div class="order-history-item">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="font-size: 14px; color: var(--text-main);">Замовлення #${o.id}</strong>
-                                    <span class="badge-status">${o.status}</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
-                                    <strong>Обрані послуги:</strong> ${servicesList}
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
-                                    <strong>Дата консультації:</strong> ${o.consultation_date}
-                                </div>
-                                <div style="font-size: 13px; font-weight: 700; color: var(--btn-gold); margin-top: 6px;">
-                                    Сума: ${o.total_amount} грн
-                                </div>
-                                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 11px; color: #2e7d32; display: flex; align-items: center; gap: 4px;">
-                                    <span>✓</span> Квитанцію отримано. Очікуйте підтвердження в боті.
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    box.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px;">Активних замовлень поки немає.</div>';
-                }
+            if (localOrdersHistory.length === 0) {
+                box.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px;">Активних замовлень поки немає.</div>';
+                return;
             }
+
+            localOrdersHistory.forEach(o => {
+                const servicesList = Array.isArray(o.services) ? o.services.join(', ') : o.services;
+                box.innerHTML += `
+                    <div class="order-history-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <strong style="font-size: 14px; color: var(--text-main);">Замовлення #${o.id}</strong>
+                            <span class="badge-status">${o.status}</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                            <strong>Обрані послуги:</strong> ${servicesList}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                            <strong>Дата та час (30 хв):</strong> ${o.consultation_date}
+                        </div>
+                        <div style="font-size: 13px; font-weight: 700; color: var(--btn-gold); margin-top: 6px;">
+                            Сума: ${o.total_amount} грн
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 11px; color: #2e7d32; display: flex; align-items: center; gap: 4px;">
+                            <span>✓</span> Квитанцію отримано. Очікуйте підтвердження в боті.
+                        </div>
+                    </div>
+                `;
+            });
         }
     </script>
 </body>
