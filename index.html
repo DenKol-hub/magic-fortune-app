@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Салон Гаданий</title>
+    <title>Таємниці Долі</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #f7f4ee;
-            --card-bg: #ffffff;
-            --btn-gold: #c6a258;
-            --btn-gold-hover: #b08d46;
-            --text-main: #2b2825;
-            --text-muted: #726c65;
-            --accent-purple: #4a3366;
-            --border-color: #eee9e0;
+            --bg-color: #f7f4ee;         /* Молочно-кремовый фон */
+            --card-bg: #ffffff;         /* Белые карточки */
+            --card-shadow: rgba(180, 170, 160, 0.15); /* Легкая тень */
+            --btn-gold: #c6a258;        /* Матовое золото */
+            --btn-gold-hover: #b59247;  
+            --text-main: #2b2825;       /* Темный графитовый */
+            --text-muted: #726c65;      /* Приглушенный */
+            --accent-lavender: #bfa8e2;  /* Нежная лаванда */
+            --border-color: #eee9e0;     
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -28,276 +29,386 @@
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            margin-top: 8px;
         }
 
-        .header h1 {
-            font-size: 20px;
-            margin: 0 0 6px 0;
-            color: var(--accent-purple);
+        .header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: #4a3366;
+            background: rgba(191, 168, 226, 0.25);
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
         }
 
         .header p {
             font-size: 13px;
             color: var(--text-muted);
             margin: 0;
+            font-style: italic;
+            line-height: 1.4;
         }
 
-        .card {
-            background: var(--card-bg);
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .service-card {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--card-shadow);
         }
 
-        .section-title {
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
+        .service-card input[type="checkbox"] {
+            margin-top: 3px;
+            accent-color: var(--btn-gold);
+            width: 18px;
+            height: 18px;
         }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
+        .service-info { flex-grow: 1; }
 
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
+        .service-title {
+            font-weight: 600;
+            font-size: 15px;
             margin-bottom: 4px;
             color: var(--text-main);
         }
 
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 13px;
-            background: var(--bg-color);
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
-
-        .service-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
-        .service-item:last-child {
-            border-bottom: none;
-        }
-
-        .service-info {
-            font-size: 13px;
+        .service-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.3;
         }
 
         .service-price {
-            font-weight: bold;
+            font-weight: 700;
             color: var(--btn-gold);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .form-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 90px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .form-section h3 {
             font-size: 13px;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
         }
 
-        .checkbox-custom {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
+        .input-group { margin-bottom: 12px; }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: var(--text-muted);
         }
 
-        .total-box {
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 11px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .footer-action {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 2px solid var(--border-color);
         }
 
         .total-price {
-            color: var(--btn-gold);
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .btn-submit {
+            background-color: var(--btn-gold);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* --- МОДАЛЬНОЕ ОКНО ОПЛАТЫ --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
             width: 100%;
-            background: var(--btn-gold);
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        .card-number-box {
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 15px 0;
+            border: 1px dashed var(--btn-gold);
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        .btn-modal-pay {
+            background-color: var(--btn-gold);
             color: white;
             border: none;
+            width: 100%;
             padding: 12px;
             border-radius: 10px;
             font-weight: bold;
-            font-size: 14px;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
 
-        .btn-submit:active {
-            background: var(--btn-gold-hover);
+        .btn-modal-close {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>✨ Салон Таро & Гаданий</h1>
-        <p>Заполните анкету и выберите нужный расклад</p>
+        <h2>Вас вітає Корнелія 👩🏻‍💻</h2>
+        <p>Ваші відповіді вже існують. Залишилося лише поставити правильне запитання.</p>
     </div>
 
-    <!-- АНКЕТА КЛИЕНТА -->
-    <div class="card">
-        <div class="section-title">👤 Ваши данные</div>
-        
-        <div class="form-group">
-            <label for="client_name">Ваше имя *</label>
-            <input type="text" id="client_name" placeholder="Например: Anna">
-        </div>
+    <div class="services-list">
+        <label class="service-card">
+            <input type="checkbox" value="150" data-name="Любов і стосунки" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">❤️ Любов і стосунки</div>
+                <div class="service-desc">Почуття, наміри, перспектива розвитку взаємин</div>
+            </div>
+            <div class="service-price">150 грн</div>
+        </label>
 
-        <div class="form-group">
-            <label for="client_dob">Дата рождения (ДД.ММ.ГГГГ) *</label>
-            <input type="text" id="client_dob" placeholder="15.08.1998">
-        </div>
+        <label class="service-card">
+            <input type="checkbox" value="100" data-name="Кар’єра та фінанси" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">💰 Кар’єра та фінанси</div>
+                <div class="service-desc">Робота, покликання, нові можливості та фінансовий потік</div>
+            </div>
+            <div class="service-price">100 грн</div>
+        </label>
 
-        <div class="form-group">
-            <label for="client_question">Ваш вопрос тарологу *</label>
-            <textarea id="client_question" placeholder="Опишите вашу ситуацию или задайте точный вопрос..."></textarea>
+        <label class="service-card">
+            <input type="checkbox" value="200" data-name="Карма та призначення" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">🌙 Карма та призначення</div>
+                <div class="service-desc">Життєві уроки, духовний шлях і призначення душі</div>
+            </div>
+            <div class="service-price">200 грн</div>
+        </label>
+
+        <label class="service-card">
+            <input type="checkbox" value="300" data-name="Великий прогноз на 3 місяці" onchange="calculateTotal()">
+            <div class="service-info">
+                <div class="service-title">✨ Великий прогноз на 3 місяці</div>
+                <div class="service-desc">Детальний прогноз на всі сфери життя</div>
+            </div>
+            <div class="service-price">300 грн</div>
+        </label>
+    </div>
+
+    <div class="form-section">
+        <h3>Дані для розкладу</h3>
+        <div class="input-group">
+            <label>Ваше ім'я *</label>
+            <input type="text" id="client-name" placeholder="Наприклад: Анна">
+        </div>
+        <div class="input-group">
+            <label>Дата народження *</label>
+            <input type="text" id="client-dob" placeholder="ДД.ММ.ГГГГ">
+        </div>
+        <div class="input-group">
+            <label>Ваше запитання (за бажанням)</label>
+            <textarea id="client-question" rows="2" placeholder="Опишіть ваші думки або конкретну ситуацію..."></textarea>
         </div>
     </div>
 
-    <!-- ВЫБОР УСЛУГ -->
-    <div class="card">
-        <div class="section-title">🔮 Выберите расклады</div>
-
-        <div class="service-item">
-            <div class="service-info">
-                <input type="checkbox" class="checkbox-custom service-cb" data-name="Расклад на Любовь и Отношения" data-price="350" onchange="calculateTotal()">
-                <span>Расклад на Любовь</span>
-            </div>
-            <div class="service-price">350 грн</div>
-        </div>
-
-        <div class="service-item">
-            <div class="service-info">
-                <input type="checkbox" class="checkbox-custom service-cb" data-name="Расклад на Финансы и Карьеру" data-price="400" onchange="calculateTotal()">
-                <span>Финансы и Карьера</span>
-            </div>
-            <div class="service-price">400 грн</div>
-        </div>
-
-        <div class="service-item">
-            <div class="service-info">
-                <input type="checkbox" class="checkbox-custom service-cb" data-name="Прогноз на Год" data-price="600" onchange="calculateTotal()">
-                <span>Полный прогноз на Год</span>
-            </div>
-            <div class="service-price">600 грн</div>
-        </div>
-
-        <div class="total-box">
-            <span>Итого:</span>
-            <span class="total-price" id="total_amount">0 грн</span>
-        </div>
+    <div class="footer-action">
+        <div class="total-price">Разом: <span id="total-val">0</span> грн</div>
+        <button class="btn-submit" id="submit-btn" onclick="openPaymentModal()">Підтверджую заказ</button>
     </div>
 
-    <button class="btn-submit" onclick="submitOrder()">Заказать расклад ✨</button>
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-card">
+            <h3>💳 Оплата замовлення</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Перекажіть суму <strong id="modal-sum">0</strong> грн на карту:</p>
+            
+            <div class="card-number-box">
+                4441 1110 5176 5877
+            </div>
+
+            <button class="btn-modal-pay" id="pay-btn" onclick="sendOrder()">Я оплатив(а) — Отправить заказ</button>
+            <button class="btn-modal-close" onclick="closePaymentModal()">Скасувати</button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // URL БЭКЕНДА НА RENDER:
+        // URL твоего бэкенда на Render:
         const BACKEND_URL = "https://magic-bot-backend-ym8f.onrender.com";
 
-        let totalSum = 0;
+        let currentPayload = null;
 
         function calculateTotal() {
-            const checkboxes = document.querySelectorAll('.service-cb');
-            totalSum = 0;
+            const checkboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
+            let total = 0;
             checkboxes.forEach(cb => {
-                if (cb.checked) {
-                    totalSum += parseInt(cb.getAttribute('data-price'));
-                }
+                total += parseInt(cb.value);
             });
-            document.getElementById('total_amount').innerText = `${totalSum} грн`;
+            document.getElementById('total-val').innerText = total;
         }
 
-        async function submitOrder() {
-            const name = document.getElementById('client_name').value.trim();
-            const dob = document.getElementById('client_dob').value.trim();
-            const question = document.getElementById('client_question').value.trim();
+        function openPaymentModal() {
+            const name = document.getElementById('client-name').value.trim();
+            const dob = document.getElementById('client-dob').value.trim();
+            const question = document.getElementById('client-question').value.trim();
+            const selectedCheckboxes = document.querySelectorAll('.service-card input[type="checkbox"]:checked');
 
-            if (!name || !dob || !question) {
-                alert("Пожалуйста, заполните все обязательные поля!");
+            if (selectedCheckboxes.length === 0) {
+                alert("Будь ласка, оберіть хоча б одну послугу.");
                 return;
             }
 
-            const selectedServices = [];
-            document.querySelectorAll('.service-cb:checked').forEach(cb => {
+            if (!name || !dob) {
+                alert("Будь ласка, вкажіть ваше ім'я та дату народження.");
+                return;
+            }
+
+            let selectedServices = [];
+            let total = 0;
+            selectedCheckboxes.forEach(cb => {
                 selectedServices.push(cb.getAttribute('data-name'));
+                total += parseInt(cb.value);
             });
 
-            if (selectedServices.length === 0) {
-                alert("Выберите хотя бы один расклад!");
-                return;
-            }
-
-            // Получаем Telegram данные пользователя
             const user = tg.initDataUnsafe?.user || {};
             const userId = user.id;
-            const username = user.username ? `@${user.username}` : (user.first_name || 'нет юзернейма');
+            const username = user.username ? `@${user.username}` : (user.first_name || 'немає юзернейму');
 
             if (!userId) {
-                alert("Ошибка: Открывайте приложение только внутри Telegram!");
+                alert("Будь ласка, відкривайте застосунок всередині Telegram.");
                 return;
             }
 
-            const orderData = {
+            currentPayload = {
                 user_id: userId,
-                client_name: name,
                 username: username,
+                client_name: name,
                 client_dob: dob,
-                client_question: question,
+                client_question: question || "Без питання",
                 services: selectedServices,
-                total_amount: totalSum
+                total_amount: total
             };
 
-            await sendOrder(orderData);
+            document.getElementById('modal-sum').innerText = total;
+            document.getElementById('payment-modal').style.display = 'flex';
         }
 
-        async function sendOrder(orderData) {
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        async function sendOrder() {
+            if (!currentPayload) return;
+
+            const payBtn = document.getElementById('pay-btn');
+            payBtn.innerText = "Надсилання...";
+            payBtn.disabled = true;
+
             try {
                 const response = await fetch(`${BACKEND_URL}/api/order`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(orderData)
+                    body: JSON.stringify(currentPayload)
                 });
 
                 const result = await response.json();
 
                 if (response.ok && result.status === 'ok') {
-                    tg.close(); // Закрываем WebApp
+                    tg.close(); // Закрываем WebApp после успешной отправки
                 } else {
-                    alert(result.message || "Произошла ошибка при отправке заявки.");
+                    alert(result.message || "Сталася помилка при надсиланні замовлення.");
+                    payBtn.innerText = "Я оплатив(а) — Отправить заказ";
+                    payBtn.disabled = false;
                 }
             } catch (error) {
                 console.error("Ошибка сети:", error);
-                alert("Не удалось связаться с сервером.");
+                alert("Не вдалося зв'язатися з сервером.");
+                payBtn.innerText = "Я оплатив(а) — Отправить заказ";
+                payBtn.disabled = false;
             }
         }
     </script>
