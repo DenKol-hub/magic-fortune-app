@@ -30,7 +30,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Убрали вкладку Оплаты из шапки: теперь только Запис и Кабінет */
         .tabs-nav {
             display: flex;
             background: var(--border-color);
@@ -148,7 +147,6 @@
             font-size: 14px;
         }
 
-        /* Календарь на неделю */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -173,7 +171,6 @@
             font-weight: 700;
         }
 
-        /* Слоты времени с шагом 20 минут */
         .time-slots {
             display: flex;
             gap: 8px;
@@ -211,6 +208,10 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(198, 162, 88, 0.3);
             margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: var(--btn-gold-hover);
         }
 
         .btn-secondary {
@@ -227,17 +228,17 @@
         .card-box {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 4px 12px var(--card-shadow);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 16px var(--card-shadow);
             margin-bottom: 16px;
         }
 
         .requisites-box {
             background: rgba(198, 162, 88, 0.1);
             border: 1px dashed var(--btn-gold);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: 14px;
+            padding: 16px;
             margin-bottom: 16px;
             font-size: 13px;
             text-align: center;
@@ -252,6 +253,30 @@
             box-shadow: 0 4px 12px var(--card-shadow);
             margin-bottom: 12px;
             font-size: 13px;
+        }
+
+        /* Уведомление о текущей/активной записи в кабинете */
+        .active-booking-alert {
+            background: linear-gradient(135deg, rgba(198, 162, 88, 0.15) 0%, rgba(191, 168, 226, 0.2) 100%);
+            border: 1px solid var(--btn-gold);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+        .active-booking-alert h4 {
+            margin: 0 0 6px 0;
+            color: var(--accent-purple);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .active-booking-alert p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.4;
         }
 
         .order-actions {
@@ -274,34 +299,69 @@
         .btn-msg { background-color: var(--accent-purple); }
         .btn-cancel { background-color: var(--red-color); }
 
-        /* Переключатель режимов Авторизации / Регистрации */
         .auth-switcher {
             display: flex;
             background: var(--border-color);
-            border-radius: 10px;
-            padding: 3px;
-            margin-bottom: 14px;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
         }
         .auth-switch-btn {
             flex: 1;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-muted);
+            transition: all 0.2s;
         }
         .auth-switch-btn.active {
             background: var(--card-bg);
             color: var(--accent-purple);
-            box-shadow: 0 2px 6px var(--card-shadow);
+            box-shadow: 0 2px 8px var(--card-shadow);
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #4a3366 0%, #6b4d92 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px rgba(74, 51, 102, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .profile-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .profile-info p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+        .profile-logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .profile-logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
     </style>
 </head>
 <body>
 
-    <!-- Навигация: только Запис и Кабінет -->
     <div class="tabs-nav" id="client-tabs">
         <div class="tab-btn active" onclick="switchTab('order', this)">Запис</div>
         <div class="tab-btn" onclick="switchTab('cabinet', this)">Кабінет</div>
@@ -356,7 +416,7 @@
         <button class="btn-submit" onclick="submitOrderOnly()">Записатися</button>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ИЛИ БЛОК ИНСТРУКЦИИ ПО ОПЛАТЕ (появляется после успешной записи) -->
+    <!-- ИНФОРМАЦИЯ ПО ОПЛАТЕ -->
     <div id="tab-payment-info" class="tab-content">
         <div class="header">
             <h2>Оплата замовлення 💳</h2>
@@ -370,7 +430,7 @@
 
         <div class="card-box" style="text-align: center; font-size: 13px; line-height: 1.5; color: var(--text-main);">
             <b>Як надіслати квитанцію?</b><br>
-            Будь ласка, надішліть скріншот або фото квитанції безпосередньо у наш Telegram-бот у чат з адміністратором/ботом, щоб ми могли підтвердити ваш запис.<br><br>
+            Будь ласка, надішліть скріншот або фото квитанції безпосередньо у наш Telegram-бот у чат з адміністратором, щоб ми могли підтвердити ваш запис.<br><br>
             <span style="color: var(--text-muted);">Після цього можете перевірити статус у своєму кабінеті.</span>
         </div>
 
@@ -383,14 +443,12 @@
             <h2>Особистий кабінет 🔮</h2>
         </div>
         
-        <!-- Панель переключения Вход / Регистрация -->
         <div id="auth-container" class="card-box">
             <div class="auth-switcher">
                 <div class="auth-switch-btn active" id="btn-mode-login" onclick="setAuthMode('login')">Увійти</div>
                 <div class="auth-switch-btn" id="btn-mode-reg" onclick="setAuthMode('register')">Зареєструватися</div>
             </div>
 
-            <!-- Форма ВХОДА -->
             <div id="form-login-pane">
                 <div class="form-group" style="margin-bottom:8px;">
                     <input type="email" class="form-input" placeholder="Ваш Email" id="login-email">
@@ -404,7 +462,6 @@
                 </div>
             </div>
 
-            <!-- Форма РЕГИСТРАЦИИ -->
             <div id="form-reg-pane" style="display:none;">
                 <div class="form-group" style="margin-bottom:8px;">
                     <input type="text" class="form-input" placeholder="Ваше ім'я" id="reg-name">
@@ -417,21 +474,39 @@
                 </div>
                 <button class="btn-submit" onclick="performRegister()">Створити кабінет</button>
             </div>
+
+            <div id="email-verification-pane" style="display:none; text-align: center; padding: 10px 0;">
+                <div style="font-size: 38px; margin-bottom: 10px;">✉️</div>
+                <h3 style="font-size: 15px; color: var(--accent-purple); margin-bottom: 6px;">Підтвердіть вашу пошту</h3>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">
+                    Ми відправили 4-значний код підтвердження на пошту: <br><b id="verify-target-email" style="color: var(--text-main);"></b>
+                </p>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <input type="text" class="form-input" placeholder="Введіть код з пошти (напр. 1234)" id="verification-code-input" style="text-align: center; letter-spacing: 2px; font-weight: 600;">
+                </div>
+                <button class="btn-submit" onclick="verifyEmailCode()">Підтвердити та увійти</button>
+                <button class="btn-secondary btn-submit" style="margin-top: 8px;" onclick="cancelVerification()">Назад до входу</button>
+            </div>
         </div>
 
-        <!-- Сам кабинет -->
         <div id="cabinet-data" style="display:none;">
-            <div class="card-box">
-                <h3 id="cab-user-name" style="margin:0 0 4px 0; font-size:15px;">Ім'я</h3>
-                <p style="margin:0 0 12px 0; font-size:12px; color: var(--text-muted);" id="cab-user-email">email@mail.com</p>
-                <button class="btn-secondary btn-submit" style="margin-top:0; padding:8px; font-size:12px;" onclick="performLogout()">Вийти з кабінету</button>
+            <div class="profile-card">
+                <div class="profile-info">
+                    <h3 id="cab-user-name">Ім'я</h3>
+                    <p id="cab-user-email">email@mail.com</p>
+                </div>
+                <button class="profile-logout-btn" onclick="performLogout()">Вийти</button>
             </div>
-            <div class="section-title">Мої замовлення</div>
+
+            <!-- Уведомление о текущей/активной записи, если она есть -->
+            <div id="active-booking-notification" style="display: none;"></div>
+
+            <div class="section-title">Історія замовлень</div>
             <div id="cabinet-orders-list"></div>
         </div>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ (#admin в URL и проверка 2 Telegram ID на бэке) -->
+    <!-- АДМИН-ПАНЕЛЬ -->
     <div id="tab-admin" class="tab-content">
         <div class="header">
             <h2>Адмін-панель ⚙️</h2>
@@ -445,9 +520,10 @@
         let selectedTimeSlot = '';
         let currentOrderId = null;
         let selectedDateStr = '';
+        let pendingVerificationEmail = '';
+        let pendingVerificationName = '';
 
         window.addEventListener('load', () => {
-            // Проверка админ-доступа по хешу #admin через бэкенд (по двум айдишкам в Render)
             if(window.location.hash === '#admin') {
                 fetch('/api/admin/check')
                     .then(res => res.json())
@@ -462,7 +538,6 @@
                             window.location.hash = '';
                         }
                     }).catch(() => {
-                        // Если бэк еще не ответил или локально тестируем
                         const nav = document.getElementById('client-tabs');
                         nav.innerHTML += `<div class="tab-btn" onclick="switchTab('admin', this)" id="admin-tab-btn">Адмін</div>`;
                         switchTab('admin', document.getElementById('admin-tab-btn'));
@@ -500,7 +575,6 @@
             }
         }
 
-        // Календарь на 7 дней
         const calendarContainer = document.getElementById('calendar-days');
         const daysOfWeek = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
         const today = new Date();
@@ -521,7 +595,6 @@
             calendarContainer.appendChild(dayDiv);
         }
 
-        // Оформление записи без загрузки файла на сайте (квитанция отправляется в бот)
         function submitOrderOnly() {
             const name = document.getElementById('client-name').value;
             const email = document.getElementById('client-email').value;
@@ -546,22 +619,18 @@
                 if(data.success !== false) {
                     currentOrderId = data.order_id;
                     document.getElementById('payment-total').textContent = data.total_price || '250';
-                    
-                    // Показываем блок с реквизитами и инструкцией отправить квитанцию в бот
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     document.getElementById('tab-payment-info').classList.add('active');
                 } else {
                     alert(data.error || 'Помилка створення замовлення');
                 }
             }).catch(() => {
-                // Фолбек для теста без поднятого бэка
                 document.getElementById('payment-total').textContent = '250';
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.getElementById('tab-payment-info').classList.add('active');
             });
         }
 
-        // Логика ВХОДА
         function performLogin() {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
@@ -575,17 +644,19 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    showCabinetView(data.user);
-                    loadUserOrders(email);
+                    pendingVerificationEmail = email;
+                    pendingVerificationName = data.user ? data.user.name : 'Користувач';
+                    showVerificationStep(email);
                 } else {
                     alert('Неправильна пошта або пароль. Ви можете скористатися відновленням за поштою нижче.');
                 }
             }).catch(() => {
-                showCabinetView({ name: 'Користувач', email: email });
+                pendingVerificationEmail = email;
+                pendingVerificationName = 'Користувач';
+                showVerificationStep(email);
             });
         }
 
-        // Логика РЕГИСТРАЦИИ (кидает сразу в новосозданный кабинет)
         function performRegister() {
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
@@ -600,18 +671,56 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success !== false) {
-                    alert('Кабінет успішно створено! Ласкаво просимо.');
-                    showCabinetView({ name: name, email: email });
+                    pendingVerificationEmail = email;
+                    pendingVerificationName = name;
+                    showVerificationStep(email);
                 } else {
                     alert(data.error || 'Помилка реєстрації');
                 }
             }).catch(() => {
-                alert('Кабінет успішно створено! Ласкаво просимо.');
-                showCabinetView({ name: name, email: email });
+                pendingVerificationEmail = email;
+                pendingVerificationName = name;
+                showVerificationStep(email);
             });
         }
 
-        // Восстановление доступа по почте при неверном вводе
+        function showVerificationStep(email) {
+            document.getElementById('form-login-pane').style.display = 'none';
+            document.getElementById('form-reg-pane').style.display = 'none';
+            document.querySelector('.auth-switcher').style.display = 'none';
+            document.getElementById('verify-target-email').textContent = email;
+            document.getElementById('email-verification-pane').style.display = 'block';
+        }
+
+        function cancelVerification() {
+            document.getElementById('email-verification-pane').style.display = 'none';
+            document.querySelector('.auth-switcher').style.display = 'flex';
+            setAuthMode('login');
+        }
+
+        function verifyEmailCode() {
+            const code = document.getElementById('verification-code-input').value;
+            if(!code) { alert('Введіть код з пошти'); return; }
+
+            fetch('/api/verify-code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: pendingVerificationEmail, code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success !== false) {
+                    showCabinetView({ name: pendingVerificationName, email: pendingVerificationEmail });
+                    loadUserOrders(pendingVerificationEmail);
+                } else {
+                    alert('Неправильний код підтвердження');
+                }
+            }).catch(() => {
+                showCabinetView({ name: pendingVerificationName, email: pendingVerificationEmail });
+                loadUserOrders(pendingVerificationEmail);
+            });
+        }
+
         function triggerRecovery() {
             const email = document.getElementById('login-email').value;
             if(!email) {
@@ -637,30 +746,65 @@
         function performLogout() {
             document.getElementById('cabinet-data').style.display = 'none';
             document.getElementById('auth-container').style.display = 'block';
+            document.querySelector('.auth-switcher').style.display = 'flex';
+            document.getElementById('email-verification-pane').style.display = 'none';
+            document.getElementById('active-booking-notification').style.display = 'none';
+            setAuthMode('login');
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
+            document.getElementById('verification-code-input').value = '';
         }
 
+        // Загрузка истории заказов + автоматическое уведомление о текущей (активной) записи
         function loadUserOrders(email) {
             fetch(`/api/user/orders?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
                 .then(orders => {
                     const list = document.getElementById('cabinet-orders-list');
+                    const alertBox = document.getElementById('active-booking-notification');
+                    
                     if(!orders || orders.length === 0) {
-                        list.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">У вас поки немає активних замовлень.</p>';
+                        list.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">У вас поки немає замовлень в історії.</p>';
+                        alertBox.style.display = 'none';
                         return;
                     }
+
+                    // Ищем активную запись (например, со статусом "В обробці", "Очікує оплати" или "Активний")
+                    const activeOrder = orders.find(o => {
+                        const s = (o.status || '').toLowerCase();
+                        return s.includes('обробк') || s.includes('очіку') || s.includes('актив') || s.includes('нове');
+                    });
+
+                    if (activeOrder) {
+                        alertBox.style.display = 'block';
+                        alertBox.innerHTML = `
+                            <div class="active-booking-alert">
+                                <h4>✨ У вас є активна запис!</h4>
+                                <p>Послуга: <b>${activeOrder.service_names}</b><br>
+                                Час: <b>${activeOrder.slot_time}</b><br>
+                                Статус: <span style="color: var(--btn-gold); font-weight: 600;">${activeOrder.status}</span></p>
+                            </div>
+                        `;
+                    } else {
+                        alertBox.style.display = 'none';
+                    }
+
+                    // Выводим всю историю заказов списком ниже
                     list.innerHTML = '';
                     orders.forEach(o => {
                         list.innerHTML += `
                             <div class="order-card">
                                 <div style="font-weight:600;">${o.service_names}</div>
                                 <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time}</div>
-                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
+                                <div style="font-size:12px; color:var(--text-muted)">Сума: ${o.total_price || '250'} грн</div>
+                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600; margin-top:4px;">Статус: ${o.status}</div>
                             </div>
                         `;
                     });
-                }).catch(() => {});
+                }).catch(() => {
+                    // Фолбек на случай локального теста без бэка
+                    document.getElementById('cabinet-orders-list').innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Історія замовлень порожня.</p>';
+                });
         }
 
         function loadAdminOrders() {
