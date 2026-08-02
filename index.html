@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таємниці Долі | Головна</title>
+    <title>Таємниці Долі</title>
     <style>
         :root {
             --bg-color: #f7f4ee;
@@ -16,6 +16,8 @@
             --border-color: #e6dfd3;
             --accent-purple: #4a3366;
             --accent-lavender: #bfa8e2;
+            --green-color: #4a7c59;
+            --red-color: #d9534f;
         }
 
         body {
@@ -35,13 +37,14 @@
             border-radius: 14px;
             padding: 4px;
             margin-bottom: 20px;
+            gap: 4px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 8px 4px;
             text-align: center;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 10px;
@@ -226,14 +229,70 @@
             box-shadow: 0 4px 12px var(--card-shadow);
             margin-bottom: 16px;
         }
+
+        .requisites-box {
+            background: rgba(198, 162, 88, 0.1);
+            border: 1px dashed var(--btn-gold);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            background: var(--card-bg);
+            cursor: pointer;
+            margin-bottom: 16px;
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .file-upload input { display: none; }
+
+        .order-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-complete { background-color: var(--green-color); }
+        .btn-msg { background-color: var(--accent-purple); }
+        .btn-cancel { background-color: var(--red-color); }
     </style>
 </head>
 <body>
 
     <!-- Вкладки-переключатели -->
     <div class="tabs-nav">
-        <div class="tab-btn active" onclick="switchTab('order', this)">Запис на розклад</div>
-        <div class="tab-btn" onclick="switchTab('cabinet', this)">Особистий кабінет</div>
+        <div class="tab-btn active" onclick="switchTab('order', this)">Запис</div>
+        <div class="tab-btn" onclick="switchTab('payment', this)" id="nav-pay" style="display:none;">Оплата</div>
+        <div class="tab-btn" onclick="switchTab('cabinet', this)">Кабінет</div>
+        <div class="tab-btn" onclick="switchTab('admin', this)">Адмін</div>
     </div>
 
     <!-- ВКЛАДКА 1: ЗАКАЗ -->
@@ -254,39 +313,8 @@
         </div>
 
         <div class="section-title">Оберіть послуги</div>
-        <div class="services-list">
-            <label class="service-card">
-                <div class="service-left">
-                    <input type="checkbox" name="service" value="250" data-name="Любов і стосунки">
-                    <div class="service-info">
-                        <div class="title">Любов і стосунки</div>
-                        <div class="desc">Аналіз почуттів та сумісності</div>
-                    </div>
-                </div>
-                <div class="service-price">250 грн</div>
-            </label>
-
-            <label class="service-card">
-                <div class="service-left">
-                    <input type="checkbox" name="service" value="250" data-name="Кар’єра та фінанси">
-                    <div class="service-info">
-                        <div class="title">Кар’єра та фінанси</div>
-                        <div class="desc">Перспективи заробітку і росту</div>
-                    </div>
-                </div>
-                <div class="service-price">250 грн</div>
-            </label>
-
-            <label class="service-card">
-                <div class="service-left">
-                    <input type="checkbox" name="service" value="300" data-name="Великий прогноз">
-                    <div class="service-info">
-                        <div class="title">Великий прогноз</div>
-                        <div class="desc">Розклад на найближчі 3 місяці</div>
-                    </div>
-                </div>
-                <div class="service-price">300 грн</div>
-            </label>
+        <div class="services-list" id="services-container">
+            <!-- Динамически подгружаются с бэка со стабильными ID и ценами -->
         </div>
 
         <div class="section-title">Оберіть день (ближчий тиждень)</div>
@@ -302,6 +330,9 @@
             <div class="time-slot" onclick="selectTime(this)">13:40</div>
             <div class="time-slot" onclick="selectTime(this)">15:00</div>
             <div class="time-slot" onclick="selectTime(this)">15:20</div>
+            <div class="time-slot" onclick="selectTime(this)">15:40</div>
+            <div class="time-slot" onclick="selectTime(this)">18:00</div>
+            <div class="time-slot" onclick="selectTime(this)">18:20</div>
         </div>
 
         <div class="form-group">
@@ -309,30 +340,74 @@
             <input type="text" class="form-input" placeholder="Напишіть головне питання..." id="client-question">
         </div>
 
-        <button class="btn-submit" onclick="alert('Перехід до оплати...')">Далі до оплати</button>
+        <button class="btn-submit" onclick="proceedToPayment()">Далі до оплати</button>
     </div>
 
-    <!-- ВКЛАДКА 2: КАБИНЕТ -->
+    <!-- ВКЛАДКА 2: ОПЛАТА -->
+    <div id="tab-payment" class="tab-content">
+        <div class="header">
+            <h2>Оплата послуг 💳</h2>
+        </div>
+        <div class="requisites-box">
+            <b>Сума до сплати: <span id="payment-total">0</span> грн</b><br><br>
+            Картка Monobank / ПриватБанк:<br>
+            <b>4441 1111 2222 3333</b><br>
+            Отримувач: Таємниці Долі
+        </div>
+
+        <div class="section-title">Надіслати квитанцію</div>
+        <label class="file-upload">
+            <span id="file-label">📎 Натисніть, щоб завантажити скрін квитанції</span>
+            <input type="file" id="receipt-file" accept="image/*" onchange="handleFileSelect(this)">
+        </label>
+
+        <button class="btn-submit" onclick="submitOrderAndReceipt()">Я оплатив (-ла), надіслати</button>
+    </div>
+
+    <!-- ВКЛАДКА 3: КАБИНЕТ -->
     <div id="tab-cabinet" class="tab-content">
         <div class="header">
             <h2>Особистий кабінет 🔮</h2>
         </div>
-        <div class="card-box" style="text-align: center;">
+        <div id="auth-box" class="card-box" style="text-align: center;">
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Введіть ваш Email для верифікації:</p>
             <input type="email" class="form-input" placeholder="Ваш Email" id="cab-email" style="margin-bottom: 10px;">
-            <button class="btn-submit" onclick="alert('Авторизація успішна!')">Увійти в кабінет</button>
+            <button class="btn-submit" onclick="verifyCabinetEmail()">Увійти в кабінет</button>
+        </div>
+        <div id="cabinet-data" style="display:none;">
+            <div class="card-box">
+                <h3 id="cab-user-name" style="margin:0 0 4px 0; font-size:15px;">Ім'я</h3>
+                <p style="margin:0; font-size:12px; color: var(--text-muted);" id="cab-user-email">email@mail.com</p>
+            </div>
+            <div class="section-title">Мої замовлення</div>
+            <div id="cabinet-orders-list"></div>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: АДМИН -->
+    <div id="tab-admin" class="tab-content">
+        <div class="header">
+            <h2>Адмін-панель ⚙️</h2>
+        </div>
+        <div id="admin-orders-list">
+            <p style="text-align:center; color:var(--text-muted); font-size:13px;">Завантаження замовлень...</p>
         </div>
     </div>
 
     <script>
+        let selectedTimeSlot = '';
+        let currentOrderId = null;
+        let selectedDateStr = '';
+
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
-            el.classList.add('active');
+            if(el) el.classList.add('active');
+
+            if(tabId === 'admin') loadAdminOrders();
         }
 
-        let selectedTimeSlot = '';
         function selectTime(el) {
             document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
             el.classList.add('selected');
@@ -347,13 +422,178 @@
             let d = new Date();
             d.setDate(today.getDate() + i);
             let dayDiv = document.createElement('div');
+            let dateStr = `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`;
             dayDiv.className = 'calendar-day' + (i === 0 ? ' selected' : '');
+            if(i === 0) selectedDateStr = dateStr;
+            
             dayDiv.innerHTML = `${daysOfWeek[d.getDay()]}<br><b>${d.getDate()}</b>`;
             dayDiv.onclick = function() {
                 document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected'));
                 this.classList.add('selected');
+                selectedDateStr = dateStr;
             };
             calendarContainer.appendChild(dayDiv);
+        }
+
+        // Загрузка услуг с бэка
+        fetch('/api/services')
+            .then(res => res.json())
+            .then(services => {
+                const container = document.getElementById('services-container');
+                container.innerHTML = '';
+                services.forEach(s => {
+                    container.innerHTML += `
+                        <label class="service-card">
+                            <div class="service-left">
+                                <input type="checkbox" name="service" value="${s.id}" data-price="${s.price}">
+                                <div class="service-info">
+                                    <div class="title">${s.title}</div>
+                                </div>
+                            </div>
+                            <div class="service-price">${s.price} грн</div>
+                        </label>
+                    `;
+                });
+            }).catch(() => {
+                // Запасной хардкод, если бэк не запущен прямо сейчас
+                document.getElementById('services-container').innerHTML = `
+                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="1" data-price="250"><div class="service-info"><div class="title">Любов і стосунки</div></div></div><div class="service-price">250 грн</div></label>
+                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="2" data-price="250"><div class="service-info"><div class="title">Кар’єра та фінанси</div></div></div><div class="service-price">250 грн</div></label>
+                    <label class="service-card"><div class="service-left"><input type="checkbox" name="service" value="3" data-price="300"><div class="service-info"><div class="title">Великий прогноз</div></div></div><div class="service-price">300 грн</div></label>
+                `;
+            });
+
+        function proceedToPayment() {
+            const name = document.getElementById('client-name').value;
+            const email = document.getElementById('client-email').value;
+            const dob = document.getElementById('client-dob').value;
+            const question = document.getElementById('client-question').value;
+            
+            const checked = document.querySelectorAll('input[name="service"]:checked');
+            if (!name || !email) { alert('Введіть ім\'я та email'); return; }
+            if (checked.length === 0) { alert('Оберіть хоча б одну послугу'); return; }
+            if (!selectedTimeSlot) { alert('Оберіть час розкладу'); return; }
+
+            let serviceIds = Array.from(checked).map(cb => parseInt(cb.value));
+            let fullSlotTime = `${selectedDateStr} о ${selectedTimeSlot}`;
+
+            fetch('/api/order', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, email, dob, service_ids: serviceIds, question, slot_time: fullSlotTime })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success !== false) {
+                    currentOrderId = data.order_id;
+                    document.getElementById('payment-total').textContent = data.total_price;
+                    
+                    // Показываем вкладку оплаты и переключаемся на нее
+                    document.getElementById('nav-pay').style.display = 'block';
+                    switchTab('payment', document.getElementById('nav-pay'));
+                } else {
+                    alert(data.error || 'Помилка створення замовлення');
+                }
+            }).catch(() => {
+                alert('Помилка з\'єднання з сервером');
+            });
+        }
+
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                document.getElementById('file-label').textContent = '✓ Обрано: ' + input.files[0].name;
+            }
+        }
+
+        function submitOrderAndReceipt() {
+            const fileInput = document.getElementById('receipt-file');
+            if (!fileInput.files.length) { alert('Будь ласка, завантажте скрін квитанції'); return; }
+
+            const formData = new FormData();
+            formData.append('receipt', fileInput.files[0]);
+
+            fetch(`/api/order/${currentOrderId}/receipt`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert('Квитанцію успішно надіслано! Дякуємо.');
+                switchTab('cabinet', document.querySelectorAll('.tab-btn')[2]);
+            }).catch(() => {
+                alert('Помилка відвантаження квитанції');
+            });
+        }
+
+        function verifyCabinetEmail() {
+            const email = document.getElementById('cab-email').value;
+            if(!email) return alert('Введіть email');
+
+            fetch('/api/auth', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('auth-box').style.display = 'none';
+                    document.getElementById('cabinet-data').style.display = 'block';
+                    document.getElementById('cab-user-name').textContent = data.user.name;
+                    document.getElementById('cab-user-email').textContent = data.user.email;
+                    
+                    let ordersHtml = '';
+                    if(data.orders && data.orders.length > 0) {
+                        data.orders.forEach(o => {
+                            ordersHtml += `<div class="order-card"><b>${o.service_names}</b><br>Час: ${o.slot_time}<br>Статус: <b>${o.status}</b></div>`;
+                        });
+                    } else {
+                        ordersHtml = '<p style="font-size:12px; color:var(--text-muted)">У вас поки немає замовлень.</p>';
+                    }
+                    document.getElementById('cabinet-orders-list').innerHTML = ordersHtml;
+                } else {
+                    alert(data.error || 'Користувача не знайдено');
+                }
+            });
+        }
+
+        function loadAdminOrders() {
+            fetch('/api/admin/orders')
+                .then(res => res.json())
+                .then(orders => {
+                    const list = document.getElementById('admin-orders-list');
+                    if(!orders || orders.length === 0) {
+                        list.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">Немає активних замовлень.</p>';
+                        return;
+                    }
+                    list.innerHTML = '';
+                    orders.forEach(o => {
+                        list.innerHTML += `
+                            <div class="order-card">
+                                <div style="font-weight:600;">${o.client_name} (${o.client_email})</div>
+                                <div style="font-size:12px; color:var(--text-muted)">Послуги: ${o.service_names}</div>
+                                <div style="font-size:12px; color:var(--text-muted)">Час: ${o.slot_time} | Сума: ${o.total_price} грн</div>
+                                <div style="font-size:12px; color:var(--btn-gold); font-weight:600;">Статус: ${o.status}</div>
+                                ${o.receipt_url ? `<a href="${o.receipt_url}" target="_blank" style="display:block; margin-top:6px; font-size:12px; color:var(--accent-purple);">Переглянути квитанцію 📎</a>` : ''}
+                                <div class="order-actions">
+                                    <button class="btn-action btn-complete" onclick="updateOrder(${o.id}, 'complete')">Виконано</button>
+                                    <button class="btn-action btn-msg" onclick="alert('Зв\'язок з клієнтом через бота')">Зв'язок</button>
+                                    <button class="btn-action btn-cancel" onclick="updateOrder(${o.id}, 'cancel')">Скасувати</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }).catch(() => {
+                    document.getElementById('admin-orders-list').innerHTML = '<p style="text-align:center; color:var(--red-color); font-size:13px;">Помилка завантаження адмін-панелі.</p>';
+                });
+        }
+
+        function updateOrder(orderId, action) {
+            fetch(`/api/admin/order/${orderId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action })
+            }).then(() => loadAdminOrders());
         }
     </script>
 </body>
